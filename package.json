@@ -6,8 +6,8 @@
   "author": "Aymeric Chauvin <contact@halftheopposite.dev>",
   "license": "MIT",
   "scripts": {
-    "dev": "esbuild ./src/index.ts --outfile=public/index.js --watch",
-    "build": "esbuild ./src/index.ts --outfile=public/index.js"
+    "dev": "esbuild ./src/index.ts --bundle --outfile=public/index.js --watch",
+    "build": "esbuild ./src/index.ts --bundle --outfile=public/index.js"
   },
   "devDependencies": {
     "esbuild": "^0.17.19"
