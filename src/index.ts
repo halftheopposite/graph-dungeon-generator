@@ -1,6 +1,10 @@
-import { drawTiles } from "./draw";
+import { TEST_DUNGEON } from "./graph";
+import { generate } from "./dungeon";
 
 function start() {
+  //
+  // Canvas
+  //
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
   if (!canvas) {
     throw new Error(`Could not find canvas element.`);
@@ -11,6 +15,9 @@ function start() {
 
   console.log("Canvas ✅");
 
+  //
+  // Context
+  //
   const context = canvas.getContext("2d");
   if (!context) {
     throw new Error(`Could not get context.`);
@@ -18,18 +25,17 @@ function start() {
 
   console.log("Context ✅");
 
-  drawTiles(context, [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 1, 1, 0, 0, 1, 1],
-    [1, 0, 0, 0, 1, 1, 0, 0, 1, 1],
-    [1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-    [1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  ]);
+  //
+  // Generate
+  //
+  const dungeon = generate(TEST_DUNGEON);
+
+  console.log("Generate 🚧");
+
+  //
+  // Draw
+  //
+  console.log("Draw (🚧)");
 }
 
 start();
