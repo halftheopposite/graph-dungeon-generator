@@ -1,7 +1,16 @@
 import { TEST_DUNGEON } from "./graph";
-import { generate } from "./dungeon";
+import { generateDungeon } from "./dungeon";
+
+let lastStepInMS = 0;
+
+function logStep(name: string) {
+  console.log(`${name} (${performance.now() - lastStepInMS}ms)`);
+  lastStepInMS = performance.now();
+}
 
 function start() {
+  lastStepInMS = performance.now();
+
   //
   // Canvas
   //
@@ -13,7 +22,7 @@ function start() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  console.log("Canvas ✅");
+  logStep(`Canvas ✅`);
 
   //
   // Context
@@ -23,19 +32,19 @@ function start() {
     throw new Error(`Could not get context.`);
   }
 
-  console.log("Context ✅");
+  logStep(`Context ✅`);
 
   //
   // Generate
   //
-  const dungeon = generate(TEST_DUNGEON);
+  const dungeon = generateDungeon(TEST_DUNGEON);
 
-  console.log("Generate 🚧");
+  logStep(`Generate 🚧`);
 
   //
   // Draw
   //
-  console.log("Draw (🚧)");
+  logStep(`Draw 🚧`);
 }
 
 start();

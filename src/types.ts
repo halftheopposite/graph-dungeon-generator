@@ -35,6 +35,8 @@ export type PlacedRoom = GraphRoom & {
   Dimension: Dimension;
 };
 
+export type PlacedRooms = PlacedRoom[];
+
 //
 // Tiles
 //
