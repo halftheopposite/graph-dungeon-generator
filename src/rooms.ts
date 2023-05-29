@@ -1,7 +1,7 @@
-import { Dimension, RoomType } from "./types";
+import { Dimensions, RoomType } from "./types";
 import { getRandomInt } from "./utils";
 
-export function generateRoomDimensions(type: RoomType): Dimension {
+export function generateRoomDimensions(type: RoomType): Dimensions {
   switch (type) {
     case "start":
       return {

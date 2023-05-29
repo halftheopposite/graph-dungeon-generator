@@ -6,7 +6,7 @@ export type Position = {
   y: number;
 };
 
-export type Dimension = {
+export type Dimensions = {
   width: number;
   height: number;
 };
@@ -30,9 +30,9 @@ export type GraphDungeon = {
 //
 // Placed
 //
-export type PlacedRoom = GraphRoom & {
+export type PlacedRoom = Omit<GraphRoom, "connexions"> & {
   position: Position;
-  Dimension: Dimension;
+  dimensions: Dimensions;
 };
 
 export type PlacedRooms = PlacedRoom[];
