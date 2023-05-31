@@ -10,6 +10,7 @@
     "build": "esbuild ./src/index.ts --bundle --outfile=public/index.js"
   },
   "devDependencies": {
-    "esbuild": "^0.17.19"
+    "esbuild": "^0.17.19",
+    "prettier": "2.8.8"
   }
 }
