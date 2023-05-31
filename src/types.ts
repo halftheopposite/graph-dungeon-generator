@@ -15,27 +15,32 @@ export type Dimensions = {
 // Graph
 //
 export type RoomId = string;
-export type RoomType = "start" | "end";
+export type RoomType = "start" | "room" | "end";
 
 export type GraphRoom = {
   id: RoomId;
   type: RoomType;
-  connexions: RoomId[];
+  connections: RoomId[];
 };
 
 export type GraphDungeon = {
-  [roomId: RoomId]: GraphRoom;
+  width: number;
+  height: number;
+  rooms: {
+    [roomId: RoomId]: GraphRoom;
+  };
 };
 
 //
 // Placed
 //
-export type PlacedRoom = Omit<GraphRoom, "connexions"> & {
+export type Room = {
+  id: RoomId;
+  type: RoomType;
   position: Position;
   dimensions: Dimensions;
+  connections: RoomId[];
 };
-
-export type PlacedRooms = PlacedRoom[];
 
 //
 // Tiles
