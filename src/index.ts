@@ -1,5 +1,5 @@
 import { TEST_DUNGEON } from "./graph";
-import { generateDungeon } from "./dungeon";
+import { generateDungeon } from "./generate";
 
 let lastStepInMS = 0;
 

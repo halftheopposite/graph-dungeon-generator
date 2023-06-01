@@ -20,7 +20,8 @@ export type RoomType = "start" | "room" | "end";
 export type GraphRoom = {
   id: RoomId;
   type: RoomType;
-  connections: RoomId[];
+  parent: RoomId | undefined;
+  children: RoomId[];
 };
 
 export type GraphDungeon = {
@@ -39,7 +40,8 @@ export type Room = {
   type: RoomType;
   position: Position;
   dimensions: Dimensions;
-  connections: RoomId[];
+  parent?: RoomId;
+  children: RoomId[];
 };
 
 //

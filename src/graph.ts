@@ -7,27 +7,32 @@ export const TEST_DUNGEON: GraphDungeon = {
     start: {
       id: "start",
       type: "start",
-      connections: ["roomA"],
+      parent: undefined,
+      children: ["roomA"],
     },
     roomA: {
       id: "roomA",
       type: "room",
-      connections: ["roomB", "roomC"],
+      parent: "start",
+      children: ["roomB", "roomC"],
     },
     roomB: {
       id: "roomB",
       type: "room",
-      connections: ["end"],
+      parent: "roomA",
+      children: ["end"],
     },
     roomC: {
       id: "roomC",
       type: "room",
-      connections: [],
+      parent: "roomA",
+      children: [],
     },
     end: {
       id: "end",
       type: "end",
-      connections: [],
+      parent: "roomB",
+      children: [],
     },
   },
 };

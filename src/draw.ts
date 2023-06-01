@@ -1,4 +1,4 @@
-import { Tile, Tiles } from "./types";
+import { Room, Tile, Tiles } from "./types";
 import {
   TILE_VOID,
   TILE_VOID_COLOR,
@@ -7,6 +7,14 @@ import {
   TILE_SIZE,
 } from "./config";
 
+//
+// Dungeon
+//
+export function roomsToTiles(rooms: Room[]) {}
+
+//
+// Tiles
+//
 export function drawTile(
   context: CanvasRenderingContext2D,
   x: number,
