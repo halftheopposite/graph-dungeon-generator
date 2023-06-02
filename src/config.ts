@@ -6,7 +6,7 @@ export const TILE_WALL = 1;
 export const TILE_VOID_COLOR = "rgba(127,0,0)";
 export const TILE_WALL_COLOR = "rgba(0,0,0)";
 
-export const DUNGEON_WIDTH_UNIT = 32;
-export const DUNGEON_HEIGHT_UNIT = 32;
+export const DUNGEON_WIDTH_UNIT = 64;
+export const DUNGEON_HEIGHT_UNIT = 64;
 
 export const ROOM_PLACEMENT_ITERATIONS_MAX = 1000;
