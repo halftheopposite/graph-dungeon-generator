@@ -1,4 +1,5 @@
 import { areRoomsColliding } from "./collisions";
+import { DUNGEON_WIDTH_UNIT, TILE_SIZE } from "./config";
 import {
   Dimensions,
   GraphDungeon,
@@ -117,7 +118,7 @@ function generateRoomDimensions(type: RoomType): Dimensions {
 }
 
 function generateDistance(): number {
-  return 2;
+  return getRandomInt(2, 4);
 }
 
 function generatePosition(
@@ -127,7 +128,10 @@ function generatePosition(
   distance: number
 ): Position {
   if (!parent) {
-    return { x: 0, y: 0 };
+    return {
+      x: Math.floor(DUNGEON_WIDTH_UNIT / 2) - Math.floor(dimensions.width / 2),
+      y: 1,
+    };
   }
 
   return {

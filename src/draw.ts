@@ -68,3 +68,21 @@ export function drawTiles(context: CanvasRenderingContext2D, tiles: Tiles) {
     }
   }
 }
+
+//
+// Helpers
+//
+export function drawGrid(context: CanvasRenderingContext2D) {
+  for (let x = 0; x < DUNGEON_WIDTH_UNIT * TILE_SIZE; x += TILE_SIZE) {
+    context.moveTo(x, 0);
+    context.lineTo(x, DUNGEON_HEIGHT_UNIT * TILE_SIZE);
+  }
+
+  for (let y = 0; y < DUNGEON_HEIGHT_UNIT * TILE_SIZE; y += TILE_SIZE) {
+    context.moveTo(0, y);
+    context.lineTo(DUNGEON_WIDTH_UNIT * TILE_SIZE, y);
+  }
+
+  context.strokeStyle = "white";
+  context.stroke();
+}

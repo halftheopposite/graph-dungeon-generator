@@ -1,6 +1,6 @@
 import { TEST_DUNGEON } from "./graph";
 import { generateDungeon } from "./generate";
-import { drawTiles, roomsToTiles } from "./draw";
+import { drawGrid, drawTiles, roomsToTiles } from "./draw";
 
 let lastStepInMS = 0;
 
@@ -50,6 +50,7 @@ function start() {
   //
   const tiles = roomsToTiles(rooms);
   drawTiles(context, tiles);
+  drawGrid(context);
 
   logStep(`Draw ✅`);
 }
