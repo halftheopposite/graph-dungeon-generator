@@ -1,5 +1,6 @@
 import { TEST_DUNGEON } from "./graph";
 import { generateDungeon } from "./generate";
+import { drawTiles, roomsToTiles } from "./draw";
 
 let lastStepInMS = 0;
 
@@ -37,14 +38,20 @@ function start() {
   //
   // Generate
   //
-  const dungeon = generateDungeon(TEST_DUNGEON);
+  const rooms = generateDungeon(TEST_DUNGEON);
+  if (rooms.length === 0) {
+    throw new Error(`Could not generate any rooms.`);
+  }
 
-  logStep(`Generate 🚧`);
+  logStep(`Generate ✅`);
 
   //
   // Draw
   //
-  logStep(`Draw 🚧`);
+  const tiles = roomsToTiles(rooms);
+  drawTiles(context, tiles);
+
+  logStep(`Draw ✅`);
 }
 
 start();
