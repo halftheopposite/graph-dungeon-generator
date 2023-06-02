@@ -3,6 +3,7 @@ import {
   Dimensions,
   GraphDungeon,
   GraphRoom,
+  Position,
   Room,
   RoomId,
   RoomType,
@@ -36,12 +37,7 @@ function generateRooms(
 
   updatedRooms.push(room);
 
-  // Does it have connections?
-  if (graphRoom.children.length === 0) {
-    // If no => do nothing
-    return updatedRooms;
-  }
-
+  // Iterate over all children
   for (let i = 0; i < graphRoom.children.length; i++) {
     const childGraphRoomId = graphRoom.children[i];
     const childRooms = generateRooms(dungeon, updatedRooms, childGraphRoomId);
@@ -51,8 +47,10 @@ function generateRooms(
   return updatedRooms;
 }
 
-function placeRoom(rooms: Room[], graphRoom: GraphRoom): Room | null {
-  let room: Room | undefined = undefined;
+function placeRoom(rooms: Room[], graphRoom: GraphRoom): Room | undefined {
+  const parent = !!graphRoom.parent
+    ? rooms.find((item) => item.id === graphRoom.parent)
+    : undefined;
 
   // Direction
   for (let i = 0; i < 10; i++) {
@@ -67,15 +65,34 @@ function placeRoom(rooms: Room[], graphRoom: GraphRoom): Room | null {
         const distance = generateDistance();
 
         // Position
-        for (let l = 0; l < 10; l++) {}
+        for (let l = 0; l < 100; l++) {
+          const position = generatePosition(
+            parent,
+            direction,
+            dimensions,
+            distance
+          );
+
+          const room: Room = {
+            id: graphRoom.id,
+            type: graphRoom.type,
+            children: graphRoom.children,
+            dimensions,
+            position,
+          };
+          const placeable = isRoomPlaceable(room, rooms);
+          if (placeable) {
+            return room;
+          }
+        }
       }
     }
   }
 
-  return null;
+  return undefined;
 }
 
-function generateDirection(): { x: number; y: number } {
+function generateDirection(): Position {
   return { x: 0, y: 1 };
 }
 
@@ -101,6 +118,22 @@ function generateRoomDimensions(type: RoomType): Dimensions {
 
 function generateDistance(): number {
   return 2;
+}
+
+function generatePosition(
+  parent: Room | undefined,
+  direction: Position,
+  dimensions: Dimensions,
+  distance: number
+): Position {
+  if (!parent) {
+    return { x: 0, y: 0 };
+  }
+
+  return {
+    x: 0,
+    y: parent.position.y + parent.dimensions.height + distance,
+  };
 }
 
 function isRoomPlaceable(room: Room, rooms: Room[]): boolean {

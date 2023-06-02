@@ -14,7 +14,8 @@ export const TEST_DUNGEON: GraphDungeon = {
       id: "roomA",
       type: "room",
       parent: "start",
-      children: ["roomB", "roomC"],
+      children: ["roomB"],
+      // children: ["roomB", "roomC"],
     },
     roomB: {
       id: "roomB",
@@ -22,12 +23,12 @@ export const TEST_DUNGEON: GraphDungeon = {
       parent: "roomA",
       children: ["end"],
     },
-    roomC: {
-      id: "roomC",
-      type: "room",
-      parent: "roomA",
-      children: [],
-    },
+    // roomC: {
+    //   id: "roomC",
+    //   type: "room",
+    //   parent: "roomA",
+    //   children: [],
+    // },
     end: {
       id: "end",
       type: "end",
