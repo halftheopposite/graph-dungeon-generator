@@ -1,16 +1,40 @@
-import { Room, Tile, Tiles } from "./types";
 import {
+  DUNGEON_HEIGHT_UNIT,
+  DUNGEON_WIDTH_UNIT,
+  TILE_SIZE,
   TILE_VOID,
   TILE_VOID_COLOR,
   TILE_WALL,
   TILE_WALL_COLOR,
-  TILE_SIZE,
 } from "./config";
+import { Room, Tile, Tiles } from "./types";
 
 //
 // Dungeon
 //
-export function roomsToTiles(rooms: Room[]) {}
+export function roomsToTiles(rooms: Room[]): Tiles {
+  // Create empty tiles
+  const tiles: Tiles = [];
+  for (let y = 0; y < DUNGEON_HEIGHT_UNIT; y++) {
+    tiles[y] = [];
+    for (let x = 0; x < DUNGEON_WIDTH_UNIT; x++) {
+      tiles[y][x] = TILE_WALL;
+    }
+  }
+
+  // Carve rooms inside tiles
+  rooms.forEach((room) => {
+    for (let y = 0; y < room.dimensions.height; y++) {
+      for (let x = 0; x < room.dimensions.width; x++) {
+        const posY = room.position.y + y;
+        const posX = room.position.x + x;
+        tiles[posY][posX] = TILE_VOID;
+      }
+    }
+  });
+
+  return tiles;
+}
 
 //
 // Tiles
