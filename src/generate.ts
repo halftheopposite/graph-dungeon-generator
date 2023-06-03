@@ -1,5 +1,5 @@
-import { areRoomsColliding } from "./collisions";
-import { DUNGEON_WIDTH_UNIT, TILE_SIZE } from "./config";
+import { isRoomPlaceable } from "./collisions";
+import { DUNGEON_HEIGHT_UNIT, DUNGEON_WIDTH_UNIT } from "./config";
 import {
   Dimensions,
   GraphDungeon,
@@ -13,8 +13,9 @@ import { getRandomInt } from "./utils";
 
 export function generateDungeon(dungeon: GraphDungeon): Room[] {
   const rooms = generateRooms(dungeon, [], "start");
+  const normalized = normalizeRoomsPosition(rooms);
 
-  return rooms;
+  return normalized;
 }
 
 function generateRooms(
@@ -130,7 +131,8 @@ function generatePosition(
   if (!parent) {
     return {
       x: Math.floor(DUNGEON_WIDTH_UNIT / 2) - Math.floor(dimensions.width / 2),
-      y: 1,
+      y:
+        Math.floor(DUNGEON_HEIGHT_UNIT / 2) - Math.floor(dimensions.height / 2),
     };
   }
 
@@ -140,12 +142,32 @@ function generatePosition(
   };
 }
 
-function isRoomPlaceable(room: Room, rooms: Room[]): boolean {
-  for (let i = 0; i < rooms.length; i++) {
-    if (areRoomsColliding(room, rooms[i])) {
-      return false;
+function normalizeRoomsPosition(rooms: Room[]): Room[] {
+  let normalized = [...rooms];
+
+  let lowestX = 0;
+  let lowestY = 0;
+
+  normalized.forEach((item) => {
+    if (item.position.x < lowestX) {
+      lowestX = item.position.x;
     }
+
+    if (item.position.y < lowestY) {
+      lowestY = item.position.y;
+    }
+  });
+
+  if (lowestX < 0 || lowestY < 0) {
+    normalized = normalized.map((item) => {
+      const updated = { ...item };
+
+      updated.position.x = item.position.x + Math.abs(lowestX);
+      updated.position.y = item.position.y + Math.abs(lowestY);
+
+      return updated;
+    });
   }
 
-  return true;
+  return normalized;
 }

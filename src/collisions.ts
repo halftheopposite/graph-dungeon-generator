@@ -10,3 +10,13 @@ export function areRoomsColliding(room: Room, other: Room) {
     return true;
   }
 }
+
+export function isRoomPlaceable(room: Room, rooms: Room[]): boolean {
+  for (let i = 0; i < rooms.length; i++) {
+    if (areRoomsColliding(room, rooms[i])) {
+      return false;
+    }
+  }
+
+  return true;
+}
