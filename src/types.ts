@@ -48,14 +48,17 @@ export type InputDungeon = {
 //
 export class Node<T> {
   value: T;
+  parent: Node<T> | null;
   children: Node<T>[];
 
-  constructor(value: T) {
+  constructor(value: T, parent: Node<T> | null = null) {
     this.value = value;
     this.children = [];
+    this.parent = parent;
   }
 
   public addChild(node: Node<T>) {
+    node.parent = this;
     this.children.push(node);
   }
 }

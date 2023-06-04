@@ -1,9 +1,8 @@
-import { InputDungeon, InputRoom, Node, Room, RoomId } from "./types";
+import { InputDungeon, Node, Room, RoomId } from "./types";
 
 export function generateDungeon(dungeon: InputDungeon) {
-  const tree = createTree(dungeon);
-  console.log(tree);
-  traverse(tree);
+  const baseTree = createTree(dungeon);
+  const filledTree = traverse(baseTree);
 }
 
 //
@@ -43,11 +42,15 @@ function traverse(rootNode: Node<Room>) {
     const currentNode = queue.shift() as Node<Room>;
 
     // Process the current node
-    console.log(currentNode.value);
+    placeRoom(currentNode);
 
     // Enqueue the children of the current node
     for (const child of currentNode.children) {
       queue.push(child);
     }
   }
+}
+
+function placeRoom(node: Node<Room>) {
+  console.log(`${node.value.id} (parent: ${node.parent?.value.id})`);
 }
