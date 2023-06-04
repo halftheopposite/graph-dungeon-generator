@@ -3,7 +3,7 @@ import { InputDungeon, InputRoom, Node, Room, RoomId } from "./types";
 export function generateDungeon(dungeon: InputDungeon) {
   const tree = createTree(dungeon);
   console.log(tree);
-  // traverse(tree);
+  traverse(tree);
 }
 
 //

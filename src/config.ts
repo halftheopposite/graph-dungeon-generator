@@ -22,20 +22,25 @@ export const TEST_DUNGEON: InputDungeon = {
   A: {
     id: "A",
     type: "room",
-    children: ["B"],
+    children: ["B", "C"],
   },
   B: {
     id: "B",
     type: "room",
-    children: ["C", "D"],
+    children: ["D", "E"],
   },
   C: {
     id: "C",
     type: "room",
-    children: ["end"],
+    children: [],
   },
   D: {
     id: "D",
+    type: "room",
+    children: ["end"],
+  },
+  E: {
+    id: "E",
     type: "room",
     children: [],
   },
