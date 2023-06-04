@@ -1,7 +1,7 @@
 //
 // Generic
 //
-export type Position = {
+export type Vector2 = {
   x: number;
   y: number;
 };
@@ -17,19 +17,14 @@ export type Dimensions = {
 export type RoomId = string;
 export type RoomType = "start" | "room" | "end";
 
-export type GraphRoom = {
+export type Node = {
   id: RoomId;
   type: RoomType;
-  parent: RoomId | undefined;
-  children: RoomId[];
+  children?: RoomId[];
 };
 
-export type GraphDungeon = {
-  width: number;
-  height: number;
-  rooms: {
-    [roomId: RoomId]: GraphRoom;
-  };
+export type NodesMap = {
+  [roomId: RoomId]: Node;
 };
 
 //
@@ -38,10 +33,14 @@ export type GraphDungeon = {
 export type Room = {
   id: RoomId;
   type: RoomType;
-  position: Position;
+  position: Vector2;
   dimensions: Dimensions;
   parent?: RoomId;
   children: RoomId[];
+};
+
+export type RoomsMap = {
+  [roomId: RoomId]: Room;
 };
 
 //

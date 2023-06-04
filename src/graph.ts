@@ -1,39 +1,32 @@
-import { GraphDungeon } from "./types";
+import { Dungeon } from "./types";
 
-export const TEST_DUNGEON: GraphDungeon = {
-  width: 32,
-  height: 32,
-  rooms: {
-    start: {
-      id: "start",
-      type: "start",
-      parent: undefined,
-      children: ["roomA"],
-    },
-    roomA: {
-      id: "roomA",
-      type: "room",
-      parent: "start",
-      children: ["roomB"],
-      // children: ["roomB", "roomC"],
-    },
-    roomB: {
-      id: "roomB",
-      type: "room",
-      parent: "roomA",
-      children: ["end"],
-    },
-    // roomC: {
-    //   id: "roomC",
-    //   type: "room",
-    //   parent: "roomA",
-    //   children: [],
-    // },
-    end: {
-      id: "end",
-      type: "end",
-      parent: "roomB",
-      children: [],
-    },
+export const TEST_DUNGEON: Dungeon = {
+  start: {
+    id: "start",
+    type: "start",
+    children: ["A"],
+  },
+  A: {
+    id: "A",
+    type: "room",
+    children: ["B"],
+  },
+  B: {
+    id: "B",
+    type: "room",
+    children: ["C", "D"],
+  },
+  C: {
+    id: "C",
+    type: "room",
+    children: ["end"],
+  },
+  D: {
+    id: "D",
+    type: "room",
+  },
+  end: {
+    id: "end",
+    type: "end",
   },
 };
