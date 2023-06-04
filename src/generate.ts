@@ -40,7 +40,7 @@ function traverse(rootNode: Node<Room>) {
   const queue: Node<Room>[] = [rootNode];
 
   while (queue.length > 0) {
-    const currentNode = queue.shift();
+    const currentNode = queue.shift() as Node<Room>;
 
     // Process the current node
     console.log(currentNode.value);
