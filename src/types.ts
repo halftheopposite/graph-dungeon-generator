@@ -26,8 +26,8 @@ export type RoomType = "start" | "room" | "end";
 export type Room = {
   id: RoomId;
   type: RoomType;
-  position?: Vector2;
   dimensions?: Dimensions;
+  position?: Vector2;
 };
 
 //
@@ -60,5 +60,11 @@ export class Node<T> {
   public addChild(node: Node<T>) {
     node.parent = this;
     this.children.push(node);
+  }
+
+  public copyValue(): T {
+    return {
+      ...this.value,
+    };
   }
 }

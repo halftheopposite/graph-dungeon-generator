@@ -1,22 +1,47 @@
-import { Room } from "./types";
+export type AABB = {
+  id: string;
+  startX: number;
+  endX: number;
+  startY: number;
+  endY: number;
+};
 
-export function areRoomsColliding(room: Room, other: Room) {
-  if (
-    room.position.x < other.position.x + other.dimensions.width &&
-    room.position.x + room.dimensions.width > other.position.x &&
-    room.position.y < other.position.y + other.dimensions.height &&
-    room.position.y + room.dimensions.height > other.position.y
-  ) {
-    return true;
+export class AABBManager {
+  private boxes: {
+    [id: string]: AABB;
+  };
+
+  constructor() {
+    this.boxes = {};
   }
-}
 
-export function isRoomPlaceable(room: Room, rooms: Room[]): boolean {
-  for (let i = 0; i < rooms.length; i++) {
-    if (areRoomsColliding(room, rooms[i])) {
-      return false;
+  public addBox(box: AABB) {
+    this.boxes[box.id] = {
+      ...box,
+    };
+  }
+
+  public removeBox(id: string) {
+    delete this.boxes[id];
+  }
+
+  public collides(box: AABB): boolean {
+    const ids = Object.keys(this.boxes);
+
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i];
+      const currentBox = this.boxes[id];
+
+      if (
+        box.startX < currentBox.endX &&
+        box.endX > currentBox.startX &&
+        box.startY < currentBox.endY &&
+        box.endY > currentBox.startY
+      ) {
+        return true;
+      }
     }
-  }
 
-  return true;
+    return false;
+  }
 }
