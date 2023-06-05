@@ -1,6 +1,6 @@
 import { InputDungeon } from "./types";
 
-export const TILE_SIZE = 32;
+export const TILE_SIZE = 64;
 
 export const TILE_VOID_START = 1;
 export const TILE_VOID_ROOM = 2;
