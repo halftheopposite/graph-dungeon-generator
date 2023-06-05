@@ -12,6 +12,7 @@ import {
   TILE_WALL_COLOR,
 } from "../config";
 import { Node, Room, Tile, Tiles } from "../types";
+import { traverseTree } from "../utils";
 import { createTiles } from "./utils";
 
 //
@@ -35,7 +36,7 @@ function normalizeNodesPositions(rootNode: Node<Room>) {
   let lowestY = 0;
 
   // Find lowest X and Y
-  const traverseNodeFindLowest = (node: Node<Room>) => {
+  traverseTree((node) => {
     if (node.value.position!.x < lowestX) {
       lowestX = node.value.position!.x;
     }
@@ -43,46 +44,37 @@ function normalizeNodesPositions(rootNode: Node<Room>) {
     if (node.value.position!.y < lowestY) {
       lowestY = node.value.position!.y;
     }
-
-    node.children.forEach((child) => traverseNodeFindLowest(child));
-  };
-
-  traverseNodeFindLowest(rootNode);
+  }, rootNode);
 
   // Offset all positions to avoid negative values
-  const traverseNodeNormalize = (node: Node<Room>) => {
+  traverseTree((node) => {
     node.value.position!.x += Math.abs(lowestX);
     node.value.position!.y += Math.abs(lowestY);
-
-    node.children.forEach((child) => traverseNodeNormalize(child));
-  };
-
-  traverseNodeNormalize(rootNode);
+  }, rootNode);
 }
 
 function carveNode(tiles: Tiles, node: Node<Room>) {
-  // Carve current room
-  for (let y = 0; y < node.value.dimensions!.height; y++) {
-    for (let x = 0; x < node.value.dimensions!.width; x++) {
-      const posY = node.value.position!.y + y;
-      const posX = node.value.position!.x + x;
+  traverseTree((node) => {
+    // Carve current room
+    for (let y = 0; y < node.value.dimensions!.height; y++) {
+      for (let x = 0; x < node.value.dimensions!.width; x++) {
+        const posY = node.value.position!.y + y;
+        const posX = node.value.position!.x + x;
 
-      switch (node.value.type) {
-        case "start":
-          tiles[posY][posX] = TILE_VOID_START;
-          break;
-        case "room":
-          tiles[posY][posX] = TILE_VOID_ROOM;
-          break;
-        case "end":
-          tiles[posY][posX] = TILE_VOID_END;
-          break;
+        switch (node.value.type) {
+          case "start":
+            tiles[posY][posX] = TILE_VOID_START;
+            break;
+          case "room":
+            tiles[posY][posX] = TILE_VOID_ROOM;
+            break;
+          case "end":
+            tiles[posY][posX] = TILE_VOID_END;
+            break;
+        }
       }
     }
-  }
-
-  // Iterate on children
-  node.children.forEach((child) => carveNode(tiles, child));
+  }, node);
 }
 
 //
