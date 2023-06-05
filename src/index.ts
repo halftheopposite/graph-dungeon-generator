@@ -1,5 +1,6 @@
 import { TEST_DUNGEON } from "./config";
 import { generateDungeon } from "./generate";
+import { drawGrid, drawTiles, roomsToTiles } from "./draw";
 
 let lastStepInMS = 0;
 
@@ -37,21 +38,21 @@ function start() {
   //
   // Generate
   //
-  const rooms = generateDungeon(TEST_DUNGEON);
-  // if (rooms.length === 0) {
-  //   throw new Error(`Could not generate any rooms.`);
-  // }
+  const rootNode = generateDungeon(TEST_DUNGEON);
+  if (!rootNode) {
+    throw new Error(`Could not generate dungeon.`);
+  }
 
-  // logStep(`Generate ✅`);
+  logStep(`Generate ✅`);
 
   //
   // Draw
   //
-  // const tiles = roomsToTiles(rooms);
-  // drawTiles(context, tiles);
-  // drawGrid(context);
+  const tiles = roomsToTiles(rootNode);
+  drawTiles(context, tiles);
+  drawGrid(context);
 
-  // logStep(`Draw ✅`);
+  logStep(`Draw ✅`);
 }
 
 start();

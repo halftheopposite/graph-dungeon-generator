@@ -2,17 +2,21 @@ import {
   DUNGEON_HEIGHT_UNIT,
   DUNGEON_WIDTH_UNIT,
   TILE_SIZE,
-  TILE_VOID,
-  TILE_VOID_COLOR,
+  TILE_VOID_START,
+  TILE_VOID_ROOM,
+  TILE_VOID_END,
   TILE_WALL,
   TILE_WALL_COLOR,
+  TILE_VOID_START_COLOR,
+  TILE_VOID_ROOM_COLOR,
+  TILE_VOID_END_COLOR,
 } from "./config";
-import { Room, Tile, Tiles } from "./types";
+import { Node, Room, Tile, Tiles } from "./types";
 
 //
 // Dungeon
 //
-export function roomsToTiles(rooms: Room[]): Tiles {
+export function roomsToTiles(rootNode: Node<Room>): Tiles {
   // Create empty tiles
   const tiles: Tiles = [];
   for (let y = 0; y < DUNGEON_HEIGHT_UNIT; y++) {
@@ -22,18 +26,65 @@ export function roomsToTiles(rooms: Room[]): Tiles {
     }
   }
 
+  // Normalize positions
+  normalizeNodesPositions(rootNode);
+
   // Carve rooms inside tiles
-  rooms.forEach((room) => {
-    for (let y = 0; y < room.dimensions.height; y++) {
-      for (let x = 0; x < room.dimensions.width; x++) {
-        const posY = room.position.y + y;
-        const posX = room.position.x + x;
-        tiles[posY][posX] = TILE_VOID;
-      }
-    }
-  });
+  carveNode(tiles, rootNode);
 
   return tiles;
+}
+
+function normalizeNodesPositions(rootNode: Node<Room>) {
+  let lowestX = 0;
+  let lowestY = 0;
+
+  function traverseNodeFindLowest(node: Node<Room>) {
+    if (node.value.position!.x < lowestX) {
+      lowestX = node.value.position!.x;
+    }
+
+    if (node.value.position!.y < lowestY) {
+      lowestY = node.value.position!.y;
+    }
+
+    node.children.forEach((child) => traverseNodeFindLowest(child));
+  }
+
+  function traverseNodeNormalize(node: Node<Room>) {
+    node.value.position!.x += Math.abs(lowestX);
+    node.value.position!.y += Math.abs(lowestY);
+
+    node.children.forEach((child) => traverseNodeNormalize(child));
+  }
+
+  traverseNodeFindLowest(rootNode);
+  traverseNodeNormalize(rootNode);
+}
+
+function carveNode(tiles: Tiles, node: Node<Room>) {
+  // Carve current room
+  for (let y = 0; y < node.value.dimensions!.height; y++) {
+    for (let x = 0; x < node.value.dimensions!.width; x++) {
+      const posY = node.value.position!.y + y;
+      const posX = node.value.position!.x + x;
+
+      switch (node.value.type) {
+        case "start":
+          tiles[posY][posX] = TILE_VOID_START;
+          break;
+        case "room":
+          tiles[posY][posX] = TILE_VOID_ROOM;
+          break;
+        case "end":
+          tiles[posY][posX] = TILE_VOID_END;
+          break;
+      }
+    }
+  }
+
+  // Iterate on children
+  node.children.forEach((child) => carveNode(tiles, child));
 }
 
 //
@@ -46,15 +97,17 @@ export function drawTile(
   tile: Tile
 ) {
   switch (tile) {
-    case TILE_VOID:
-      {
-        context.fillStyle = TILE_VOID_COLOR;
-      }
+    case TILE_VOID_START:
+      context.fillStyle = TILE_VOID_START_COLOR;
+      break;
+    case TILE_VOID_ROOM:
+      context.fillStyle = TILE_VOID_ROOM_COLOR;
+      break;
+    case TILE_VOID_END:
+      context.fillStyle = TILE_VOID_END_COLOR;
       break;
     case TILE_WALL:
-      {
-        context.fillStyle = TILE_WALL_COLOR;
-      }
+      context.fillStyle = TILE_WALL_COLOR;
       break;
   }
 

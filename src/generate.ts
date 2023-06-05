@@ -1,18 +1,24 @@
 import { AABBManager, AABB } from "./collisions";
 import {
   Dimensions,
+  Direction,
   InputDungeon,
   Node,
   Room,
   RoomId,
-  RoomType,
   Vector2,
 } from "./types";
-import { getRandomInt } from "./utils";
+import { getRandomInt, randomChoice } from "./utils";
 
-export function generateDungeon(dungeon: InputDungeon) {
+const MAX_ITERATIONS = 100;
+const DISTANCE = 3;
+const CORRIDOR_WIDTH = 2;
+
+export function generateDungeon(dungeon: InputDungeon): Node<Room> {
   const baseTree = createTree(dungeon);
   const filledTree = generate(baseTree);
+
+  return filledTree;
 }
 
 //
@@ -64,9 +70,9 @@ function generate(rootNode: Node<Room>) {
       queue.push(child);
     }
   }
-}
 
-const MAX_ITERATIONS = 100;
+  return rootNode;
+}
 
 function placeRoom(
   aabbManager: AABBManager,
@@ -84,13 +90,7 @@ function placeRoom(
   node.value.position = generateRoomPosition(node);
 
   // Create box to check for collisions
-  const box: AABB = {
-    id: node.value.id,
-    startX: node.value.position.x,
-    endX: node.value.position.x + node.value.dimensions.width,
-    startY: node.value.position.y,
-    endY: node.value.position.y + node.value.dimensions.height,
-  };
+  const box = toAABB(node);
 
   // Check collisions
   if (aabbManager.collides(box)) {
@@ -104,6 +104,18 @@ function placeRoom(
   aabbManager.addBox(box);
 
   return;
+}
+
+function toAABB(node: Node<Room>): AABB {
+  const box: AABB = {
+    id: node.value.id,
+    startX: node.value.position!.x,
+    endX: node.value.position!.x + node.value.dimensions!.width,
+    startY: node.value.position!.y,
+    endY: node.value.position!.y + node.value.dimensions!.height,
+  };
+
+  return box;
 }
 
 //
@@ -129,8 +141,6 @@ function generateRoomDimensions(node: Node<Room>): Dimensions {
   }
 }
 
-const DISTANCE = 3;
-
 function generateRoomPosition(node: Node<Room>): Vector2 {
   if (!node.value.dimensions) {
     throw new Error(
@@ -138,6 +148,7 @@ function generateRoomPosition(node: Node<Room>): Vector2 {
     );
   }
 
+  // If there is no parent we place the room at the center
   if (!node.parent) {
     return {
       x: 0 - Math.floor(node.value.dimensions?.width / 2),
@@ -145,12 +156,51 @@ function generateRoomPosition(node: Node<Room>): Vector2 {
     };
   }
 
-  return {
-    x: 0 - Math.floor(node.value.dimensions.width / 2),
-    // Dimensions can't be null on parent
-    y:
-      node.parent.value.position!.y +
-      node.parent.value.dimensions!.height +
-      DISTANCE,
-  };
+  // Pick a direction to place the room
+  const direction = randomChoice<Direction>(["n", "s", "e", "w"]);
+  const distance = getRandomInt(DISTANCE, DISTANCE);
+  const parentBox = toAABB(node.parent);
+
+  switch (direction) {
+    case "n": {
+      const minStartX =
+        parentBox.startX - node.value.dimensions.width + CORRIDOR_WIDTH;
+      const maxStartX = parentBox.endX - CORRIDOR_WIDTH;
+
+      return {
+        x: getRandomInt(minStartX, maxStartX),
+        y: parentBox.startY - distance - node.value.dimensions.height,
+      };
+    }
+    case "s": {
+      const minStartX =
+        parentBox.startX - node.value.dimensions.width + CORRIDOR_WIDTH;
+      const maxStartX = parentBox.endX - CORRIDOR_WIDTH;
+
+      return {
+        x: getRandomInt(minStartX, maxStartX),
+        y: parentBox.endY + distance,
+      };
+    }
+    case "e": {
+      const minStartY =
+        parentBox.startY - node.value.dimensions.height + CORRIDOR_WIDTH;
+      const maxStartY = parentBox.endY - CORRIDOR_WIDTH;
+
+      return {
+        x: parentBox.endX + distance,
+        y: getRandomInt(minStartY, maxStartY),
+      };
+    }
+    case "w": {
+      const minStartY =
+        parentBox.startY - node.value.dimensions.height + CORRIDOR_WIDTH;
+      const maxStartY = parentBox.endY - CORRIDOR_WIDTH;
+
+      return {
+        x: parentBox.endX + distance,
+        y: getRandomInt(minStartY, maxStartY),
+      };
+    }
+  }
 }
