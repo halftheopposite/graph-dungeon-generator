@@ -11,7 +11,7 @@ import {
   TILE_WALL,
   TILE_WALL_COLOR,
 } from "../config";
-import { Node, Room, Tile, Tiles } from "../types";
+import { Node, Room, Tile, Tiles, Vector2 } from "../types";
 import { traverseTree } from "../utils";
 import { createTiles } from "./utils";
 
@@ -112,7 +112,43 @@ function drawTile(
   context.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
 
+export function drawConnections(
+  context: CanvasRenderingContext2D,
+  rootNode: Node<Room>
+) {
+  context.lineWidth = 2;
+  context.strokeStyle = "white";
+
+  traverseTree((node) => {
+    const parentCenter = getNodeCenter(node);
+
+    node.children.forEach((child) => {
+      const childCenter = getNodeCenter(child);
+
+      context.moveTo(parentCenter.x * TILE_SIZE, parentCenter.y * TILE_SIZE);
+      context.lineTo(childCenter.x * TILE_SIZE, childCenter.y * TILE_SIZE);
+    });
+  }, rootNode);
+
+  context.stroke();
+}
+
+function getNodeCenter(node: Node<Room>): Vector2 {
+  const centerX =
+    node.value.position!.x + Math.abs(node.value.dimensions!.width / 2);
+  const centerY =
+    node.value.position!.y + Math.abs(node.value.dimensions!.height / 2);
+
+  return {
+    x: centerX,
+    y: centerY,
+  };
+}
+
 export function drawGrid(context: CanvasRenderingContext2D) {
+  context.lineWidth = 1;
+  context.strokeStyle = "white";
+
   for (let x = 0; x < DUNGEON_WIDTH_UNIT * TILE_SIZE; x += TILE_SIZE) {
     context.moveTo(x, 0);
     context.lineTo(x, DUNGEON_HEIGHT_UNIT * TILE_SIZE);
@@ -123,6 +159,5 @@ export function drawGrid(context: CanvasRenderingContext2D) {
     context.lineTo(DUNGEON_WIDTH_UNIT * TILE_SIZE, y);
   }
 
-  context.strokeStyle = "white";
   context.stroke();
 }

@@ -1,6 +1,11 @@
 import { TEST_DUNGEON } from "./config";
 import { generateDungeon } from "./generate/generate";
-import { drawGrid, drawTiles, roomsToTiles } from "./draw/draw";
+import {
+  drawConnections,
+  drawGrid,
+  drawTiles,
+  roomsToTiles,
+} from "./draw/draw";
 
 let lastStepInMS = 0;
 
@@ -50,6 +55,7 @@ function start() {
   //
   const tiles = roomsToTiles(rootNode);
   drawTiles(context, tiles);
+  drawConnections(context, rootNode);
   drawGrid(context);
 
   logStep(`Draw ✅`);
