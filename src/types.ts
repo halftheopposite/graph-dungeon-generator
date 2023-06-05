@@ -11,6 +11,8 @@ export type Dimensions = {
   height: number;
 };
 
+export type Direction = "n" | "s" | "e" | "w";
+
 //
 // Tiles
 //
