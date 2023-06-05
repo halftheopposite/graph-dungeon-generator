@@ -1,4 +1,3 @@
-import { AABBManager, AABB } from "./collisions";
 import {
   Dimensions,
   Direction,
@@ -7,7 +6,8 @@ import {
   Room,
   RoomId,
   Vector2,
-} from "./types";
+} from "../types";
+import { AABB, AABBManager } from "./collisions";
 import { getRandomInt, randomChoice } from "./utils";
 
 const MAX_ITERATIONS = 100;

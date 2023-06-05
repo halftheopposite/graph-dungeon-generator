@@ -2,16 +2,16 @@ import {
   DUNGEON_HEIGHT_UNIT,
   DUNGEON_WIDTH_UNIT,
   TILE_SIZE,
-  TILE_VOID_START,
-  TILE_VOID_ROOM,
   TILE_VOID_END,
+  TILE_VOID_END_COLOR,
+  TILE_VOID_ROOM,
+  TILE_VOID_ROOM_COLOR,
+  TILE_VOID_START,
+  TILE_VOID_START_COLOR,
   TILE_WALL,
   TILE_WALL_COLOR,
-  TILE_VOID_START_COLOR,
-  TILE_VOID_ROOM_COLOR,
-  TILE_VOID_END_COLOR,
-} from "./config";
-import { Node, Room, Tile, Tiles } from "./types";
+} from "../config";
+import { Node, Room, Tile, Tiles } from "../types";
 
 //
 // Dungeon

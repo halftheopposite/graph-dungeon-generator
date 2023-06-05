@@ -1,6 +1,6 @@
 import { TEST_DUNGEON } from "./config";
-import { generateDungeon } from "./generate";
-import { drawGrid, drawTiles, roomsToTiles } from "./draw";
+import { generateDungeon } from "./generate/generate";
+import { drawGrid, drawTiles, roomsToTiles } from "./draw/draw";
 
 let lastStepInMS = 0;
 
