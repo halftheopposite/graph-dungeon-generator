@@ -55,7 +55,7 @@ function generate(rootNode: Node<Room>) {
 
     // Process the current node
     console.log(
-      `→ Room "${currentNode.value.id}" (parent: "${currentNode.parent?.value.id}")`
+      `→ Processing "${currentNode.value.id}" (parent: "${currentNode.parent?.value.id}")...`
     );
     placeRoom(aabbManager, currentNode);
 
@@ -100,7 +100,7 @@ function placeRoom(
   }
 
   // Otherwise add
-  console.log(`   ↳ All good`);
+  console.log(`   ↳ All good ✅\n`, JSON.stringify(box, null, 2));
   aabbManager.addBox(box);
 
   return;
