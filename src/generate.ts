@@ -99,9 +99,10 @@ function placeRoom(
     return placeRoom(aabbManager, node, iterations - 1);
   }
 
-  // Otherwise add
-  console.log(`   ↳ All good ✅\n`, JSON.stringify(box, null, 2));
+  // Otherwise, we're good and we add the node to the AABB manager
   aabbManager.addBox(box);
+
+  console.log(`   ↳ All good ✅\n`, JSON.stringify(box, null, 2));
 
   return;
 }
@@ -158,6 +159,8 @@ function generateRoomPosition(node: Node<Room>): Vector2 {
 
   // Pick a direction to place the room
   const direction = randomChoice<Direction>(["n", "s", "e", "w"]);
+
+  console.log("Direction:", direction);
   const distance = getRandomInt(DISTANCE, DISTANCE);
   const parentBox = toAABB(node.parent);
 
@@ -172,6 +175,16 @@ function generateRoomPosition(node: Node<Room>): Vector2 {
         y: parentBox.startY - distance - node.value.dimensions.height,
       };
     }
+    case "w": {
+      const minStartY =
+        parentBox.startY - node.value.dimensions.height + CORRIDOR_WIDTH;
+      const maxStartY = parentBox.endY - CORRIDOR_WIDTH;
+
+      return {
+        x: parentBox.startX - distance - node.value.dimensions.width,
+        y: getRandomInt(minStartY, maxStartY),
+      };
+    }
     case "s": {
       const minStartX =
         parentBox.startX - node.value.dimensions.width + CORRIDOR_WIDTH;
@@ -183,16 +196,6 @@ function generateRoomPosition(node: Node<Room>): Vector2 {
       };
     }
     case "e": {
-      const minStartY =
-        parentBox.startY - node.value.dimensions.height + CORRIDOR_WIDTH;
-      const maxStartY = parentBox.endY - CORRIDOR_WIDTH;
-
-      return {
-        x: parentBox.endX + distance,
-        y: getRandomInt(minStartY, maxStartY),
-      };
-    }
-    case "w": {
       const minStartY =
         parentBox.startY - node.value.dimensions.height + CORRIDOR_WIDTH;
       const maxStartY = parentBox.endY - CORRIDOR_WIDTH;
