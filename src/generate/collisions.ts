@@ -45,3 +45,15 @@ export class AABBManager {
     return false;
   }
 }
+
+export function toAABB(node: Node<Room>): AABB {
+  const box: AABB = {
+    id: node.value.id,
+    startX: node.value.position!.x,
+    endX: node.value.position!.x + node.value.dimensions!.width,
+    startY: node.value.position!.y,
+    endY: node.value.position!.y + node.value.dimensions!.height,
+  };
+
+  return box;
+}

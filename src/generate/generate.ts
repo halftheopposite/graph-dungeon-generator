@@ -8,9 +8,10 @@ import {
   Vector2,
 } from "../types";
 import { AABB, AABBManager } from "./collisions";
-import { getRandomInt, randomChoice } from "./utils";
+import { getRandomInt, nodeRoomToAABB, randomChoice } from "./utils";
 
-const MAX_ITERATIONS = 100;
+const MAX_ROOM_ITERATIONS = 20;
+const MAX_CORRIDOR_ITERATIONS = 20;
 const DISTANCE = 3;
 const CORRIDOR_WIDTH = 2;
 
@@ -57,16 +58,18 @@ function generate(rootNode: Node<Room>) {
   const queue: Node<Room>[] = [rootNode];
 
   while (queue.length > 0) {
-    const currentNode = queue.shift() as Node<Room>;
+    const node = queue.shift() as Node<Room>;
 
-    // Process the current node
     console.log(
-      `→ Processing "${currentNode.value.id}" (parent: "${currentNode.parent?.value.id}")...`
+      `→ Processing "${node.value.id}" (parent: "${node.parent?.value.id}")...`
     );
-    placeRoom(aabbManager, currentNode);
+
+    // Attempt to place room
+    placeRoom(aabbManager, node);
+    placeCorridor(aabbManager, node);
 
     // Enqueue the children of the current node
-    for (const child of currentNode.children) {
+    for (const child of node.children) {
       queue.push(child);
     }
   }
@@ -77,46 +80,52 @@ function generate(rootNode: Node<Room>) {
 function placeRoom(
   aabbManager: AABBManager,
   node: Node<Room>,
-  iterations: number = 100
+  iterations: number = MAX_ROOM_ITERATIONS
 ) {
   if (iterations === 0) {
     throw new Error(
-      `Could not place node under "${MAX_ITERATIONS}" iterations.`
+      `Could not place room under "${MAX_ROOM_ITERATIONS}" iterations.`
     );
   }
 
   // Generate dimensions and position
-  node.value.dimensions = generateRoomDimensions(node);
-  node.value.position = generateRoomPosition(node);
+  const dimensions = generateRoomDimensions(node);
+  const position = generateRoomPosition(node, dimensions);
 
   // Create box to check for collisions
-  const box = toAABB(node);
+  const box: AABB = {
+    id: node.value.id,
+    startX: position.x,
+    startY: position.y,
+    endX: position.x + dimensions.width,
+    endY: position.y + dimensions.height,
+  };
 
   // Check collisions
   if (aabbManager.collides(box)) {
-    // If it collides, try again.
-    console.log(`   ↳ Trying again (${iterations - 1} left)...`);
+    console.log(` ↳ Trying again (${iterations - 1} left)...`);
     return placeRoom(aabbManager, node, iterations - 1);
   }
 
-  // Otherwise, we're good and we add the node to the AABB manager
+  node.value.dimensions = dimensions;
+  node.value.position = position;
   aabbManager.addBox(box);
-
-  console.log(`   ↳ All good ✅\n`, JSON.stringify(box, null, 2));
-
-  return;
 }
 
-function toAABB(node: Node<Room>): AABB {
-  const box: AABB = {
-    id: node.value.id,
-    startX: node.value.position!.x,
-    endX: node.value.position!.x + node.value.dimensions!.width,
-    startY: node.value.position!.y,
-    endY: node.value.position!.y + node.value.dimensions!.height,
-  };
+function placeCorridor(
+  aabbManager: AABBManager,
+  node: Node<Room>,
+  iterations: number = MAX_CORRIDOR_ITERATIONS
+) {
+  if (iterations === 0) {
+    throw new Error(
+      `Could not place corridor under "${MAX_CORRIDOR_ITERATIONS}" iterations.`
+    );
+  }
 
-  return box;
+  // Find startX and startY: check on both axis for overlaps
+  // Find endX and endY: check on both axis for overlaps
+  // Infer dimensions
 }
 
 //
@@ -142,8 +151,11 @@ function generateRoomDimensions(node: Node<Room>): Dimensions {
   }
 }
 
-function generateRoomPosition(node: Node<Room>): Vector2 {
-  if (!node.value.dimensions) {
+function generateRoomPosition(
+  node: Node<Room>,
+  dimensions: Dimensions
+): Vector2 {
+  if (!dimensions) {
     throw new Error(
       `Cannot generate position without dimensions on node "${node.value.id}".`
     );
@@ -152,42 +164,37 @@ function generateRoomPosition(node: Node<Room>): Vector2 {
   // If there is no parent we place the room at the center
   if (!node.parent) {
     return {
-      x: 0 - Math.floor(node.value.dimensions?.width / 2),
-      y: 0 - Math.floor(node.value.dimensions?.height / 2),
+      x: 0 - Math.floor(dimensions.width / 2),
+      y: 0 - Math.floor(dimensions.height / 2),
     };
   }
 
   // Pick a direction to place the room
   const direction = randomChoice<Direction>(["n", "s", "e", "w"]);
-
-  console.log("Direction:", direction);
   const distance = getRandomInt(DISTANCE, DISTANCE);
-  const parentBox = toAABB(node.parent);
+  const parentBox = nodeRoomToAABB(node.parent);
 
   switch (direction) {
     case "n": {
-      const minStartX =
-        parentBox.startX - node.value.dimensions.width + CORRIDOR_WIDTH;
+      const minStartX = parentBox.startX - dimensions.width + CORRIDOR_WIDTH;
       const maxStartX = parentBox.endX - CORRIDOR_WIDTH;
 
       return {
         x: getRandomInt(minStartX, maxStartX),
-        y: parentBox.startY - distance - node.value.dimensions.height,
+        y: parentBox.startY - distance - dimensions.height,
       };
     }
     case "w": {
-      const minStartY =
-        parentBox.startY - node.value.dimensions.height + CORRIDOR_WIDTH;
+      const minStartY = parentBox.startY - dimensions.height + CORRIDOR_WIDTH;
       const maxStartY = parentBox.endY - CORRIDOR_WIDTH;
 
       return {
-        x: parentBox.startX - distance - node.value.dimensions.width,
+        x: parentBox.startX - distance - dimensions.width,
         y: getRandomInt(minStartY, maxStartY),
       };
     }
     case "s": {
-      const minStartX =
-        parentBox.startX - node.value.dimensions.width + CORRIDOR_WIDTH;
+      const minStartX = parentBox.startX - dimensions.width + CORRIDOR_WIDTH;
       const maxStartX = parentBox.endX - CORRIDOR_WIDTH;
 
       return {
@@ -196,8 +203,7 @@ function generateRoomPosition(node: Node<Room>): Vector2 {
       };
     }
     case "e": {
-      const minStartY =
-        parentBox.startY - node.value.dimensions.height + CORRIDOR_WIDTH;
+      const minStartY = parentBox.startY - dimensions.height + CORRIDOR_WIDTH;
       const maxStartY = parentBox.endY - CORRIDOR_WIDTH;
 
       return {
