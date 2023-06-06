@@ -11,8 +11,8 @@ import {
   TILE_WALL,
   TILE_WALL_COLOR,
 } from "../config";
-import { Node, Room, Tile, Tiles, Vector2 } from "../types";
-import { traverseTree } from "../utils";
+import { Node, Room, Tile, Tiles } from "../types";
+import { traverseTree, getRoomCenter } from "../utils";
 import { createTiles } from "./utils";
 
 //
@@ -120,10 +120,10 @@ export function drawConnections(
   context.strokeStyle = "white";
 
   traverseTree((node) => {
-    const parentCenter = getNodeCenter(node);
+    const parentCenter = getRoomCenter(node);
 
     node.children.forEach((child) => {
-      const childCenter = getNodeCenter(child);
+      const childCenter = getRoomCenter(child);
 
       context.moveTo(parentCenter.x * TILE_SIZE, parentCenter.y * TILE_SIZE);
       context.lineTo(childCenter.x * TILE_SIZE, childCenter.y * TILE_SIZE);
@@ -131,18 +131,6 @@ export function drawConnections(
   }, rootNode);
 
   context.stroke();
-}
-
-function getNodeCenter(node: Node<Room>): Vector2 {
-  const centerX =
-    node.value.position!.x + Math.abs(node.value.dimensions!.width / 2);
-  const centerY =
-    node.value.position!.y + Math.abs(node.value.dimensions!.height / 2);
-
-  return {
-    x: centerX,
-    y: centerY,
-  };
 }
 
 export function drawGrid(context: CanvasRenderingContext2D) {

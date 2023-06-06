@@ -1,6 +1,6 @@
 import { InputDungeon } from "./types";
 
-export const TILE_SIZE = 64;
+export const TILE_SIZE = 32;
 
 export const TILE_VOID_START = 1;
 export const TILE_VOID_ROOM = 2;
@@ -21,12 +21,17 @@ export const TEST_DUNGEON: InputDungeon = {
   start: {
     id: "start",
     type: "start",
-    children: ["A"],
+    children: ["A", "G"],
   },
   A: {
     id: "A",
     type: "room",
     children: ["B", "C"],
+  },
+  G: {
+    id: "G",
+    type: "room",
+    children: [],
   },
   B: {
     id: "B",
@@ -41,10 +46,15 @@ export const TEST_DUNGEON: InputDungeon = {
   D: {
     id: "D",
     type: "room",
-    children: ["end"],
+    children: ["F", "end"],
   },
   E: {
     id: "E",
+    type: "room",
+    children: [],
+  },
+  F: {
+    id: "F",
     type: "room",
     children: [],
   },
