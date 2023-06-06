@@ -1,4 +1,5 @@
 import { Node, Room } from "../types";
+import { traverseTree } from "../utils";
 import { AABB } from "./collisions";
 
 /**
@@ -27,4 +28,26 @@ export function nodeRoomToAABB(node: Node<Room>): AABB {
   };
 
   return box;
+}
+
+export function normalizeNodesPositions(rootNode: Node<Room>) {
+  let lowestX = 0;
+  let lowestY = 0;
+
+  // Find lowest X and Y
+  traverseTree((node) => {
+    if (node.value.position!.x < lowestX) {
+      lowestX = node.value.position!.x;
+    }
+
+    if (node.value.position!.y < lowestY) {
+      lowestY = node.value.position!.y;
+    }
+  }, rootNode);
+
+  // Offset all positions to avoid negative values
+  traverseTree((node) => {
+    node.value.position!.x += Math.abs(lowestX);
+    node.value.position!.y += Math.abs(lowestY);
+  }, rootNode);
 }

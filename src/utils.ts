@@ -17,3 +17,12 @@ export function getRoomCenter(node: Node<Room>): Vector2 {
     y: centerY,
   };
 }
+
+export function logStep<T>(name: string, fn: () => T) {
+  const lastStepInMS = performance.now();
+
+  const result = fn();
+  console.log(`${name} (${performance.now() - lastStepInMS}ms)`);
+
+  return result;
+}

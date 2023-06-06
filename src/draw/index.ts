@@ -1,3 +1,4 @@
+import { initializeContext } from "./canvas";
 import {
   DUNGEON_HEIGHT_UNIT,
   DUNGEON_WIDTH_UNIT,
@@ -15,42 +16,24 @@ import { Node, Room, Tile, Tiles } from "../types";
 import { traverseTree, getRoomCenter } from "../utils";
 import { createTiles } from "./utils";
 
-//
-// Carve
-//
-export function roomsToTiles(rootNode: Node<Room>): Tiles {
+export function draw(rootNode: Node<Room>) {
+  const context = initializeContext();
+
+  const tiles = roomsToTiles(rootNode);
+
+  drawTiles(context, tiles);
+  drawConnections(context, rootNode);
+  drawGrid(context);
+}
+
+function roomsToTiles(rootNode: Node<Room>): Tiles {
   // Create empty tiles
   const tiles = createTiles(DUNGEON_WIDTH_UNIT, DUNGEON_HEIGHT_UNIT, TILE_WALL);
-
-  // Normalize positions
-  normalizeNodesPositions(rootNode);
 
   // Carve rooms inside tiles
   carveNode(tiles, rootNode);
 
   return tiles;
-}
-
-function normalizeNodesPositions(rootNode: Node<Room>) {
-  let lowestX = 0;
-  let lowestY = 0;
-
-  // Find lowest X and Y
-  traverseTree((node) => {
-    if (node.value.position!.x < lowestX) {
-      lowestX = node.value.position!.x;
-    }
-
-    if (node.value.position!.y < lowestY) {
-      lowestY = node.value.position!.y;
-    }
-  }, rootNode);
-
-  // Offset all positions to avoid negative values
-  traverseTree((node) => {
-    node.value.position!.x += Math.abs(lowestX);
-    node.value.position!.y += Math.abs(lowestY);
-  }, rootNode);
 }
 
 function carveNode(tiles: Tiles, node: Node<Room>) {
@@ -80,7 +63,7 @@ function carveNode(tiles: Tiles, node: Node<Room>) {
 //
 // Draw
 //
-export function drawTiles(context: CanvasRenderingContext2D, tiles: Tiles) {
+function drawTiles(context: CanvasRenderingContext2D, tiles: Tiles) {
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
       drawTile(context, x, y, tiles[y][x]);
@@ -112,19 +95,27 @@ function drawTile(
   context.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
 
-export function drawConnections(
+function drawConnections(
   context: CanvasRenderingContext2D,
   rootNode: Node<Room>
 ) {
-  context.lineWidth = 2;
-  context.strokeStyle = "white";
-
   traverseTree((node) => {
     const parentCenter = getRoomCenter(node);
+
+    context.font = "32px Arial";
+    context.fillStyle = "white";
+    context.textAlign = "center";
+    context.fillText(
+      node.value.id,
+      parentCenter.x * TILE_SIZE,
+      parentCenter.y * TILE_SIZE
+    );
 
     node.children.forEach((child) => {
       const childCenter = getRoomCenter(child);
 
+      context.lineWidth = 2;
+      context.strokeStyle = "white";
       context.moveTo(parentCenter.x * TILE_SIZE, parentCenter.y * TILE_SIZE);
       context.lineTo(childCenter.x * TILE_SIZE, childCenter.y * TILE_SIZE);
     });
@@ -133,7 +124,7 @@ export function drawConnections(
   context.stroke();
 }
 
-export function drawGrid(context: CanvasRenderingContext2D) {
+function drawGrid(context: CanvasRenderingContext2D) {
   context.lineWidth = 1;
   context.strokeStyle = "white";
 
