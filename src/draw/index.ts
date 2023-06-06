@@ -1,4 +1,3 @@
-import { initializeContext } from "./canvas";
 import {
   DUNGEON_HEIGHT_UNIT,
   DUNGEON_WIDTH_UNIT,
@@ -13,30 +12,39 @@ import {
   TILE_WALL_COLOR,
 } from "../config";
 import { Node, Room, Tile, Tiles } from "../types";
-import { traverseTree, getRoomCenter } from "../utils";
-import { createTiles } from "./utils";
+import { getRoomCenter, traverseTree } from "../utils";
+import { initializeContext } from "./canvas";
+import { createTiles as initializeTilemap } from "./utils";
 
+/**
+ * Entrypoint method to:
+ * - Get a reference to the Canvas' context
+ * - Transform rooms and corridors to tiles
+ * - Draw widgets such as room names and connections
+ */
 export function draw(rootNode: Node<Room>) {
   const context = initializeContext();
 
-  const tiles = roomsToTiles(rootNode);
+  // Find dungeon's width and height
 
+  // Create empty tilesmap
+  const tiles = initializeTilemap(
+    DUNGEON_WIDTH_UNIT,
+    DUNGEON_HEIGHT_UNIT,
+    TILE_WALL
+  );
+
+  // Carve rooms and corridors into tilesmap
+  carve(tiles, rootNode);
+
+  // Draw everything on a canvas
   drawTiles(context, tiles);
   drawConnections(context, rootNode);
+  drawRoomIds(context, rootNode);
   drawGrid(context);
 }
 
-function roomsToTiles(rootNode: Node<Room>): Tiles {
-  // Create empty tiles
-  const tiles = createTiles(DUNGEON_WIDTH_UNIT, DUNGEON_HEIGHT_UNIT, TILE_WALL);
-
-  // Carve rooms inside tiles
-  carveNode(tiles, rootNode);
-
-  return tiles;
-}
-
-function carveNode(tiles: Tiles, node: Node<Room>) {
+function carve(tiles: Tiles, node: Node<Room>) {
   traverseTree((node) => {
     // Carve current room
     for (let y = 0; y < node.value.dimensions!.height; y++) {
@@ -102,15 +110,6 @@ function drawConnections(
   traverseTree((node) => {
     const parentCenter = getRoomCenter(node);
 
-    context.font = "32px Arial";
-    context.fillStyle = "white";
-    context.textAlign = "center";
-    context.fillText(
-      node.value.id,
-      parentCenter.x * TILE_SIZE,
-      parentCenter.y * TILE_SIZE
-    );
-
     node.children.forEach((child) => {
       const childCenter = getRoomCenter(child);
 
@@ -119,6 +118,23 @@ function drawConnections(
       context.moveTo(parentCenter.x * TILE_SIZE, parentCenter.y * TILE_SIZE);
       context.lineTo(childCenter.x * TILE_SIZE, childCenter.y * TILE_SIZE);
     });
+  }, rootNode);
+
+  context.stroke();
+}
+
+function drawRoomIds(context: CanvasRenderingContext2D, rootNode: Node<Room>) {
+  traverseTree((node) => {
+    const parentCenter = getRoomCenter(node);
+
+    context.font = "32px Arial";
+    context.fillStyle = "white";
+    context.textAlign = "center";
+    context.fillText(
+      node.value.id,
+      parentCenter.x * TILE_SIZE,
+      parentCenter.y * TILE_SIZE
+    );
   }, rootNode);
 
   context.stroke();

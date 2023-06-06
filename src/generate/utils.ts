@@ -30,7 +30,7 @@ export function nodeRoomToAABB(node: Node<Room>): AABB {
   return box;
 }
 
-export function normalizeNodesPositions(rootNode: Node<Room>) {
+export function normalizeRoomsPositions(rootNode: Node<Room>) {
   let lowestX = 0;
   let lowestY = 0;
 

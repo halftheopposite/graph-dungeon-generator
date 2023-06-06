@@ -1,13 +1,13 @@
 import { TEST_DUNGEON } from "./config";
 import { draw } from "./draw";
 import { generate } from "./generate";
-import { Node, Room } from "./types";
 import { logStep } from "./utils";
 
+//
+// Entry point of everything 🧙‍♂️
+//
 function start() {
-  const rootNode = logStep<Node<Room>>(`Generate ✅`, () =>
-    generate(TEST_DUNGEON)
-  );
+  const rootNode = logStep(`Generate ✅`, () => generate(TEST_DUNGEON));
 
   logStep(`Draw ✅`, () => draw(rootNode));
 }

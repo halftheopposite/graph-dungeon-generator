@@ -11,7 +11,7 @@ import { AABB, AABBManager } from "./collisions";
 import {
   getRandomInt,
   nodeRoomToAABB,
-  normalizeNodesPositions,
+  normalizeRoomsPositions,
   randomChoice,
 } from "./utils";
 
@@ -20,24 +20,27 @@ const MAX_CORRIDOR_ITERATIONS = 20;
 const DISTANCE = 3;
 const CORRIDOR_WIDTH = 2;
 
+/**
+ * Entrypoint method to generate the rooms and corridors
+ * based on a provided graph file.
+ */
 export function generate(dungeon: InputDungeon): Node<Room> {
   const rootNode = parseInputDungeon(dungeon);
 
-  if (!rootNode) {
-    throw new Error(`Could not parse input dungeon.`);
-  }
-
-  generateRooms(rootNode);
-  normalizeNodesPositions(rootNode);
+  placeRooms(rootNode);
+  normalizeRoomsPositions(rootNode);
 
   return rootNode;
 }
 
+//
+// Parse
+//
 function parseInputDungeon(dungeon: InputDungeon): Node<Room> {
-  return createNode(dungeon, "start");
+  return createRoomNode(dungeon, "start");
 }
 
-function createNode(dungeon: InputDungeon, roomId: RoomId): Node<Room> {
+function createRoomNode(dungeon: InputDungeon, roomId: RoomId): Node<Room> {
   const room = dungeon[roomId];
   if (!room) {
     throw new Error(`Could not find "${roomId}" to generate tree.`);
@@ -49,7 +52,7 @@ function createNode(dungeon: InputDungeon, roomId: RoomId): Node<Room> {
   });
 
   room.children.map((item) => {
-    const childNode = createNode(dungeon, item);
+    const childNode = createRoomNode(dungeon, item);
     node.addChild(childNode);
   });
 
@@ -57,22 +60,20 @@ function createNode(dungeon: InputDungeon, roomId: RoomId): Node<Room> {
 }
 
 //
-// Generate and place rooms
+// Generate
 //
-function generateRooms(rootNode: Node<Room>) {
+function placeRooms(rootNode: Node<Room>) {
+  // Create collisions manager
   const aabbManager = new AABBManager();
 
   // Initialize the queue with the root node
   const queue: Node<Room>[] = [rootNode];
 
+  // Treat all the nodes we add to the queue (Breadth-First Search)
   while (queue.length > 0) {
     const node = queue.shift() as Node<Room>;
 
-    console.log(
-      `→ Processing "${node.value.id}" (parent: "${node.parent?.value.id}")...`
-    );
-
-    // Attempt to place room
+    // Attempt to place room and corridor
     placeRoom(aabbManager, node);
     placeCorridor(aabbManager, node);
 
@@ -111,7 +112,6 @@ function placeRoom(
 
   // Check collisions
   if (aabbManager.collides(box)) {
-    console.log(` ↳ Trying again (${iterations - 1} left)...`);
     return placeRoom(aabbManager, node, iterations - 1);
   }
 
@@ -142,18 +142,22 @@ function placeCorridor(
   const childBox = nodeRoomToAABB(node);
 
   if (parentBox.endX < childBox.startX) {
+    // Right
     console.log(
       `Child "${node.value.id}" is on the right of "${node.parent.value.id}"`
     );
   } else if (parentBox.startX > childBox.endX) {
+    // Left
     console.log(
       `Child "${node.value.id}" is on the left of "${node.parent.value.id}"`
     );
   } else if (parentBox.endY < childBox.startY) {
+    // Bottom
     console.log(
       `Child "${node.value.id}" is on the bottom of "${node.parent.value.id}"`
     );
   } else if (parentBox.startY < childBox.endY) {
+    // Top
     console.log(
       `Child "${node.value.id}" is on the top of "${node.parent.value.id}"`
     );
