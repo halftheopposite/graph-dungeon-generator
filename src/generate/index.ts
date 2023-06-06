@@ -143,24 +143,12 @@ function placeCorridor(
 
   if (parentBox.endX < childBox.startX) {
     // Right
-    console.log(
-      `Child "${node.value.id}" is on the right of "${node.parent.value.id}"`
-    );
   } else if (parentBox.startX > childBox.endX) {
     // Left
-    console.log(
-      `Child "${node.value.id}" is on the left of "${node.parent.value.id}"`
-    );
   } else if (parentBox.endY < childBox.startY) {
     // Bottom
-    console.log(
-      `Child "${node.value.id}" is on the bottom of "${node.parent.value.id}"`
-    );
   } else if (parentBox.startY < childBox.endY) {
     // Top
-    console.log(
-      `Child "${node.value.id}" is on the top of "${node.parent.value.id}"`
-    );
   }
 
   // Find startX and startY: check on both axis for overlaps
