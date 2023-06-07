@@ -39,11 +39,14 @@ export function draw(rootNode: Node<Room>) {
 
   // Draw everything on a canvas
   drawTiles(context, tiles);
+  drawGrid(context);
   drawConnections(context, rootNode);
   drawRoomIds(context, rootNode);
-  drawGrid(context);
 }
 
+//
+// Carve
+//
 function carve(tiles: Tiles, node: Node<Room>) {
   traverseTree((node) => {
     // Carve current room
@@ -107,14 +110,15 @@ function drawConnections(
   context: CanvasRenderingContext2D,
   rootNode: Node<Room>
 ) {
+  context.lineWidth = 2;
+  context.strokeStyle = "white";
+
   traverseTree((node) => {
     const parentCenter = getRoomCenter(node);
 
     node.children.forEach((child) => {
       const childCenter = getRoomCenter(child);
 
-      context.lineWidth = 2;
-      context.strokeStyle = "white";
       context.moveTo(parentCenter.x * TILE_SIZE, parentCenter.y * TILE_SIZE);
       context.lineTo(childCenter.x * TILE_SIZE, childCenter.y * TILE_SIZE);
     });
@@ -124,35 +128,36 @@ function drawConnections(
 }
 
 function drawRoomIds(context: CanvasRenderingContext2D, rootNode: Node<Room>) {
+  context.font = "32px Arial";
+  context.fillStyle = "white";
+  context.textAlign = "center";
+
   traverseTree((node) => {
     const parentCenter = getRoomCenter(node);
 
-    context.font = "32px Arial";
-    context.fillStyle = "white";
-    context.textAlign = "center";
     context.fillText(
       node.value.id,
       parentCenter.x * TILE_SIZE,
       parentCenter.y * TILE_SIZE
     );
   }, rootNode);
-
-  context.stroke();
 }
 
 function drawGrid(context: CanvasRenderingContext2D) {
-  context.lineWidth = 1;
+  context.lineWidth = 0.5;
   context.strokeStyle = "white";
 
   for (let x = 0; x < DUNGEON_WIDTH_UNIT * TILE_SIZE; x += TILE_SIZE) {
+    context.beginPath();
     context.moveTo(x, 0);
     context.lineTo(x, DUNGEON_HEIGHT_UNIT * TILE_SIZE);
+    context.stroke();
   }
 
   for (let y = 0; y < DUNGEON_HEIGHT_UNIT * TILE_SIZE; y += TILE_SIZE) {
+    context.beginPath();
     context.moveTo(0, y);
     context.lineTo(DUNGEON_WIDTH_UNIT * TILE_SIZE, y);
+    context.stroke();
   }
-
-  context.stroke();
 }
