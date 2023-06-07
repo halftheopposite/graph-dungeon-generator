@@ -128,9 +128,6 @@ function placeCorridor(
   iterations: number = MAX_CORRIDOR_ITERATIONS
 ) {
   if (!node.parent) {
-    console.log(
-      `Skipping corridor for node "${node.value.id}" because it does not have a parent.`
-    );
     return;
   }
 
