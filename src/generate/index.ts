@@ -9,6 +9,7 @@ import {
 } from "../types";
 import { AABB, AABBManager } from "./collisions";
 import {
+  getRelativeChildDirectionAndDistance,
   getRandomInt,
   nodeRoomToAABB,
   normalizeRoomsPositions,
@@ -17,7 +18,8 @@ import {
 
 const MAX_ROOM_ITERATIONS = 20;
 const MAX_CORRIDOR_ITERATIONS = 20;
-const DISTANCE = 3;
+const DISTANCE_MIN = 3;
+const DISTANCE_MAX = 5;
 const CORRIDOR_WIDTH = 2;
 
 /**
@@ -138,18 +140,10 @@ function placeCorridor(
     );
   }
 
-  const parentBox = nodeRoomToAABB(node.parent);
-  const childBox = nodeRoomToAABB(node);
-
-  if (parentBox.endX < childBox.startX) {
-    // Right
-  } else if (parentBox.startX > childBox.endX) {
-    // Left
-  } else if (parentBox.endY < childBox.startY) {
-    // Bottom
-  } else if (parentBox.startY < childBox.endY) {
-    // Top
-  }
+  const childDirection = getRelativeChildDirectionAndDistance(
+    node.parent,
+    node
+  );
 
   // Find startX and startY: check on both axis for overlaps
   // Find endX and endY: check on both axis for overlaps
@@ -199,7 +193,7 @@ function generateRoomPosition(
 
   // Pick a direction to place the room
   const direction = randomChoice<Direction>(["n", "s", "e", "w"]);
-  const distance = getRandomInt(DISTANCE, DISTANCE);
+  const distance = getRandomInt(DISTANCE_MIN, DISTANCE_MAX);
   const parentBox = nodeRoomToAABB(node.parent);
 
   switch (direction) {
