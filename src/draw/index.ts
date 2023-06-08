@@ -110,7 +110,7 @@ function drawConnections(
   context: CanvasRenderingContext2D,
   rootNode: Node<Room>
 ) {
-  context.lineWidth = 2;
+  context.lineWidth = 1.5;
   context.strokeStyle = "white";
 
   traverseTree((node) => {
@@ -128,7 +128,7 @@ function drawConnections(
 }
 
 function drawRoomIds(context: CanvasRenderingContext2D, rootNode: Node<Room>) {
-  context.font = "32px Arial";
+  context.font = "16px Arial";
   context.fillStyle = "white";
   context.textAlign = "center";
 
