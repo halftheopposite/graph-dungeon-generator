@@ -46,15 +46,15 @@ export type Corridor = {
 export type Room = {
   id: RoomId;
   type: RoomType;
-  corridors?: Corridor[];
   dimensions?: Dimensions;
   position?: Vector2;
+  /** A corridor leading to the node's parent. */
+  corridor?: Corridor;
 };
 
 //
 // Graph - Node data structure.
 //
-
 export class Node<T> {
   value: T;
   parent: Node<T> | null;

@@ -1,6 +1,8 @@
 import {
   DUNGEON_HEIGHT_UNIT,
   DUNGEON_WIDTH_UNIT,
+  TILE_CORRIDOR,
+  TILE_CORRIDOR_COLOR,
   TILE_SIZE,
   TILE_VOID_END,
   TILE_VOID_END_COLOR,
@@ -35,7 +37,8 @@ export function draw(rootNode: Node<Room>) {
   );
 
   // Carve rooms and corridors into tilesmap
-  carve(tiles, rootNode);
+  carveRooms(tiles, rootNode);
+  carveCorridors(tiles, rootNode);
 
   // Draw everything on a canvas
   drawTiles(context, tiles);
@@ -47,9 +50,8 @@ export function draw(rootNode: Node<Room>) {
 //
 // Carve
 //
-function carve(tiles: Tiles, node: Node<Room>) {
+function carveRooms(tiles: Tiles, node: Node<Room>) {
   traverseTree((node) => {
-    // Carve current room
     for (let y = 0; y < node.value.dimensions!.height; y++) {
       for (let x = 0; x < node.value.dimensions!.width; x++) {
         const posY = node.value.position!.y + y;
@@ -66,6 +68,23 @@ function carve(tiles: Tiles, node: Node<Room>) {
             tiles[posY][posX] = TILE_VOID_END;
             break;
         }
+      }
+    }
+  }, node);
+}
+
+function carveCorridors(tiles: Tiles, node: Node<Room>) {
+  traverseTree((node) => {
+    if (!node.value.corridor) {
+      return;
+    }
+
+    for (let y = 0; y < node.value.corridor!.dimensions!.height; y++) {
+      for (let x = 0; x < node.value.corridor!.dimensions!.width; x++) {
+        const posY = node.value.corridor.position!.y + y;
+        const posX = node.value.corridor.position!.x + x;
+
+        tiles[posY][posX] = TILE_CORRIDOR;
       }
     }
   }, node);
@@ -100,6 +119,9 @@ function drawTile(
       break;
     case TILE_WALL:
       context.fillStyle = TILE_WALL_COLOR;
+      break;
+    case TILE_CORRIDOR:
+      context.fillStyle = TILE_CORRIDOR_COLOR;
       break;
   }
 

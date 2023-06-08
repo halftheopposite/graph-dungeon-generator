@@ -9,10 +9,10 @@ import {
 } from "../types";
 import { AABB, AABBManager } from "./collisions";
 import {
-  getRelativeChildDirectionAndDistance,
+  generateCorridor,
   getRandomInt,
   nodeRoomToAABB,
-  normalizeRoomsPositions,
+  normalizePositions,
   randomChoice,
 } from "./utils";
 
@@ -30,7 +30,7 @@ export function generate(dungeon: InputDungeon): Node<Room> {
   const rootNode = parseInputDungeon(dungeon);
 
   placeRooms(rootNode);
-  normalizeRoomsPositions(rootNode);
+  normalizePositions(rootNode);
 
   return rootNode;
 }
@@ -77,7 +77,7 @@ function placeRooms(rootNode: Node<Room>) {
 
     // Attempt to place room and corridor
     placeRoom(aabbManager, node);
-    placeCorridor(aabbManager, node);
+    placeCorridors(aabbManager, node);
 
     // Enqueue the children of the current node
     for (const child of node.children) {
@@ -122,7 +122,7 @@ function placeRoom(
   aabbManager.addBox(box);
 }
 
-function placeCorridor(
+function placeCorridors(
   aabbManager: AABBManager,
   node: Node<Room>,
   iterations: number = MAX_CORRIDOR_ITERATIONS
@@ -137,14 +137,24 @@ function placeCorridor(
     );
   }
 
-  const childDirection = getRelativeChildDirectionAndDistance(
-    node.parent,
-    node
-  );
+  // Compute corridor position
+  const corridor = generateCorridor(node.parent, node);
 
-  // Find startX and startY: check on both axis for overlaps
-  // Find endX and endY: check on both axis for overlaps
-  // Infer dimensions
+  // Create box to check for collisions
+  const box: AABB = {
+    id: node.value.id,
+    startX: corridor.position.x,
+    startY: corridor.position.y,
+    endX: corridor.position.x + corridor.dimensions.width,
+    endY: corridor.position.y + corridor.dimensions.height,
+  };
+
+  // Check collisions
+  if (aabbManager.collides(box)) {
+    throw new Error(`Found corridor is colliding.`);
+  }
+
+  node.value.corridor = corridor;
 }
 
 //
