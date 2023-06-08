@@ -1,5 +1,6 @@
 import {
   CORRIDOR_ITERATIONS_MAX,
+  CORRIDOR_WIDTH_MAX,
   CORRIDOR_WIDTH_MIN,
   ROOM_DISTANCE_MAX,
   ROOM_DISTANCE_MIN,
@@ -203,13 +204,13 @@ function generateRoomPosition(
   // Pick a direction to place the room
   const direction = randomChoice<Direction>(["n", "s", "e", "w"]);
   const distance = getRandomInt(ROOM_DISTANCE_MIN, ROOM_DISTANCE_MAX);
+  const corridorWidth = getRandomInt(CORRIDOR_WIDTH_MIN, CORRIDOR_WIDTH_MAX);
   const parentBox = nodeRoomToAABB(node.parent);
 
   switch (direction) {
     case "n": {
-      const minStartX =
-        parentBox.startX - dimensions.width + CORRIDOR_WIDTH_MIN;
-      const maxStartX = parentBox.endX - CORRIDOR_WIDTH_MIN;
+      const minStartX = parentBox.startX - dimensions.width + corridorWidth;
+      const maxStartX = parentBox.endX - corridorWidth;
 
       return {
         x: getRandomInt(minStartX, maxStartX),
@@ -217,9 +218,8 @@ function generateRoomPosition(
       };
     }
     case "w": {
-      const minStartY =
-        parentBox.startY - dimensions.height + CORRIDOR_WIDTH_MIN;
-      const maxStartY = parentBox.endY - CORRIDOR_WIDTH_MIN;
+      const minStartY = parentBox.startY - dimensions.height + corridorWidth;
+      const maxStartY = parentBox.endY - corridorWidth;
 
       return {
         x: parentBox.startX - distance - dimensions.width,
@@ -227,9 +227,8 @@ function generateRoomPosition(
       };
     }
     case "s": {
-      const minStartX =
-        parentBox.startX - dimensions.width + CORRIDOR_WIDTH_MIN;
-      const maxStartX = parentBox.endX - CORRIDOR_WIDTH_MIN;
+      const minStartX = parentBox.startX - dimensions.width + corridorWidth;
+      const maxStartX = parentBox.endX - corridorWidth;
 
       return {
         x: getRandomInt(minStartX, maxStartX),
@@ -237,9 +236,8 @@ function generateRoomPosition(
       };
     }
     case "e": {
-      const minStartY =
-        parentBox.startY - dimensions.height + CORRIDOR_WIDTH_MIN;
-      const maxStartY = parentBox.endY - CORRIDOR_WIDTH_MIN;
+      const minStartY = parentBox.startY - dimensions.height + corridorWidth;
+      const maxStartY = parentBox.endY - corridorWidth;
 
       return {
         x: parentBox.endX + distance,
@@ -252,6 +250,15 @@ function generateRoomPosition(
 function generateCorridor(parent: Node<Room>, child: Node<Room>): Corridor {
   const parentBox = nodeRoomToAABB(parent);
   const childBox = nodeRoomToAABB(child);
+
+  let position: Vector2 = {
+    x: 0,
+    y: 0,
+  };
+  let dimensions: Dimensions = {
+    width: 0,
+    height: 0,
+  };
 
   // North
   if (parentBox.startY >= childBox.endY) {
@@ -267,16 +274,10 @@ function generateCorridor(parent: Node<Room>, child: Node<Room>): Corridor {
       throw new Error(`Could not find overlapping segment.`);
     }
 
-    return {
-      position: {
-        x: segment[0],
-        y: childBox.endY,
-      },
-      dimensions: {
-        width: Math.abs(segment[0] - segment[1]),
-        height,
-      },
-    };
+    position.x = segment[0];
+    position.y = childBox.endY;
+    dimensions.width = Math.abs(segment[0] - segment[1]);
+    dimensions.height = height;
   }
   // South
   else if (parentBox.endY <= childBox.startY) {
@@ -292,16 +293,10 @@ function generateCorridor(parent: Node<Room>, child: Node<Room>): Corridor {
       throw new Error(`Could not find overlapping segment.`);
     }
 
-    return {
-      position: {
-        x: segment[0],
-        y: parentBox.endY,
-      },
-      dimensions: {
-        width: Math.abs(segment[0] - segment[1]),
-        height,
-      },
-    };
+    position.x = segment[0];
+    position.y = parentBox.endY;
+    dimensions.width = Math.abs(segment[0] - segment[1]);
+    dimensions.height = height;
   }
   // West
   else if (parentBox.startX >= childBox.endX) {
@@ -317,16 +312,10 @@ function generateCorridor(parent: Node<Room>, child: Node<Room>): Corridor {
       throw new Error(`Could not find overlapping segment.`);
     }
 
-    return {
-      position: {
-        x: childBox.endX,
-        y: segment[0],
-      },
-      dimensions: {
-        width,
-        height: Math.abs(segment[0] - segment[1]),
-      },
-    };
+    position.x = childBox.endX;
+    position.y = segment[0];
+    dimensions.width = width;
+    dimensions.height = Math.abs(segment[0] - segment[1]);
   }
   // East
   else if (parentBox.endX <= childBox.startX) {
@@ -342,19 +331,14 @@ function generateCorridor(parent: Node<Room>, child: Node<Room>): Corridor {
       throw new Error(`Could not find overlapping segment.`);
     }
 
-    return {
-      position: {
-        x: parentBox.endX,
-        y: segment[0],
-      },
-      dimensions: {
-        width,
-        height: Math.abs(segment[0] - segment[1]),
-      },
-    };
+    position.x = parentBox.endX;
+    position.y = segment[0];
+    dimensions.width = width;
+    dimensions.height = Math.abs(segment[0] - segment[1]);
   }
 
-  throw new Error(
-    `Could not generate corridor between "${child.value.id}" and "${parent.value.id}".`
-  );
+  return {
+    position,
+    dimensions,
+  };
 }
