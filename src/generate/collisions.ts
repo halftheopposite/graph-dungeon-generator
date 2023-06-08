@@ -1,3 +1,5 @@
+import { Node, Room } from "../types";
+
 export type AABB = {
   id: string;
   startX: number;
