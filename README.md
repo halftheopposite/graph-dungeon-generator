@@ -1,1 +1,1 @@
-# circular-graph-dungeon-generator
+# Graph-based Dungeon Generator
