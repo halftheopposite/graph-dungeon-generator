@@ -17,6 +17,13 @@ export function randomChoice<T>(values: T[]): T {
 }
 
 /**
+ * Clamp a value.
+ */
+export function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+/**
  * Transform a Node<Room> to a bounding box.
  */
 export function nodeRoomToAABB(node: Node<Room>): AABB {

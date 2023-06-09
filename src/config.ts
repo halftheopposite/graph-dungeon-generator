@@ -23,7 +23,7 @@ export const ROOM_DISTANCE_MAX = 5;
 
 export const CORRIDOR_ITERATIONS_MAX = 20;
 export const CORRIDOR_WIDTH_MIN = 4;
-export const CORRIDOR_WIDTH_MAX = 5;
+export const CORRIDOR_WIDTH_MAX = 4;
 
 export const TEST_DUNGEON: InputDungeon = {
   start: {

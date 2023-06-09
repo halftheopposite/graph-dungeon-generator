@@ -263,78 +263,94 @@ function generateCorridor(parent: Node<Room>, child: Node<Room>): Corridor {
   // North
   if (parentBox.startY >= childBox.endY) {
     const height = Math.abs(parentBox.startY - childBox.endY);
-    const segment = computeOverlapSegment(
+    const horizontalSegment = computeOverlapSegment(
       parentBox.startX,
       parentBox.endX,
       childBox.startX,
       childBox.endX
     );
 
-    if (!segment) {
+    if (!horizontalSegment) {
       throw new Error(`Could not find overlapping segment.`);
     }
 
-    position.x = segment[0];
+    const segmentWidth = Math.abs(horizontalSegment[0] - horizontalSegment[1]);
+    const leftOverWidth = segmentWidth - CORRIDOR_WIDTH_MAX;
+    const offset = Math.floor(leftOverWidth / 2);
+
+    position.x = horizontalSegment[0] + offset;
     position.y = childBox.endY;
-    dimensions.width = Math.abs(segment[0] - segment[1]);
+    dimensions.width = CORRIDOR_WIDTH_MAX;
     dimensions.height = height;
   }
   // South
   else if (parentBox.endY <= childBox.startY) {
     const height = Math.abs(parentBox.endY - childBox.startY);
-    const segment = computeOverlapSegment(
+    const horizontalSegment = computeOverlapSegment(
       parentBox.startX,
       parentBox.endX,
       childBox.startX,
       childBox.endX
     );
 
-    if (!segment) {
+    if (!horizontalSegment) {
       throw new Error(`Could not find overlapping segment.`);
     }
 
-    position.x = segment[0];
+    const segmentWidth = Math.abs(horizontalSegment[0] - horizontalSegment[1]);
+    const leftOverWidth = segmentWidth - CORRIDOR_WIDTH_MAX;
+    const offset = Math.floor(leftOverWidth / 2);
+
+    position.x = horizontalSegment[0] + offset;
     position.y = parentBox.endY;
-    dimensions.width = Math.abs(segment[0] - segment[1]);
+    dimensions.width = CORRIDOR_WIDTH_MAX;
     dimensions.height = height;
   }
   // West
   else if (parentBox.startX >= childBox.endX) {
     const width = Math.abs(parentBox.startX - childBox.endX);
-    const segment = computeOverlapSegment(
+    const verticalSegment = computeOverlapSegment(
       parentBox.startY,
       parentBox.endY,
       childBox.startY,
       childBox.endY
     );
 
-    if (!segment) {
+    if (!verticalSegment) {
       throw new Error(`Could not find overlapping segment.`);
     }
 
+    const segmentHeight = Math.abs(verticalSegment[0] - verticalSegment[1]);
+    const leftOverHeight = segmentHeight - CORRIDOR_WIDTH_MAX;
+    const offset = Math.floor(leftOverHeight / 2);
+
     position.x = childBox.endX;
-    position.y = segment[0];
+    position.y = verticalSegment[0] + offset;
     dimensions.width = width;
-    dimensions.height = Math.abs(segment[0] - segment[1]);
+    dimensions.height = CORRIDOR_WIDTH_MAX;
   }
   // East
   else if (parentBox.endX <= childBox.startX) {
     const width = Math.abs(parentBox.endX - childBox.startX);
-    const segment = computeOverlapSegment(
+    const verticalSegment = computeOverlapSegment(
       parentBox.startY,
       parentBox.endY,
       childBox.startY,
       childBox.endY
     );
 
-    if (!segment) {
+    if (!verticalSegment) {
       throw new Error(`Could not find overlapping segment.`);
     }
 
+    const segmentHeight = Math.abs(verticalSegment[0] - verticalSegment[1]);
+    const leftOverHeight = segmentHeight - CORRIDOR_WIDTH_MAX;
+    const offset = Math.floor(leftOverHeight / 2);
+
     position.x = parentBox.endX;
-    position.y = segment[0];
+    position.y = verticalSegment[0] + offset;
     dimensions.width = width;
-    dimensions.height = Math.abs(segment[0] - segment[1]);
+    dimensions.height = CORRIDOR_WIDTH_MAX;
   }
 
   return {
