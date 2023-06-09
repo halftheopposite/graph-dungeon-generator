@@ -1,4 +1,4 @@
-import { Corridor, Node, Room } from "../types";
+import { Direction, Node, Room } from "../types";
 import { traverseTree } from "../utils";
 import { AABB } from "./collisions";
 
@@ -87,4 +87,30 @@ export function computeOverlapSegment(
     // Overlap segment exists
     return [startOverlap, endOverlap];
   }
+}
+
+/**
+ * Compute the direction of a child relative to its parent.
+ */
+export function getChildDirection(parentBox: AABB, childBox: AABB): Direction {
+  // North
+  if (parentBox.startY >= childBox.endY) {
+    return "n";
+  }
+  // South
+  else if (parentBox.endY <= childBox.startY) {
+    return "s";
+  }
+  // West
+  else if (parentBox.startX >= childBox.endX) {
+    return "w";
+  }
+  // East
+  else if (parentBox.endX <= childBox.startX) {
+    return "e";
+  }
+
+  throw new Error(
+    `Could not determine child "${childBox.id}" direction against parent "${parentBox.id}".`
+  );
 }
