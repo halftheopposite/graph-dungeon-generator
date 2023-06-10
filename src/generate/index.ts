@@ -175,6 +175,11 @@ function generateRoomDimensions(node: Node<Room>): Dimensions {
         width: getRandomInt(8, 12),
         height: getRandomInt(8, 12),
       };
+    case "boss":
+      return {
+        width: getRandomInt(12, 20),
+        height: getRandomInt(12, 20),
+      };
     case "end":
       return {
         width: getRandomInt(5, 7),

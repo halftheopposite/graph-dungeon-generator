@@ -23,7 +23,7 @@ export type Tiles = number[][];
 // Dungeon - Input value given to generate graph.
 //
 export type RoomId = string;
-export type RoomType = "start" | "room" | "end";
+export type RoomType = "start" | "room" | "boss" | "end";
 
 export type InputRoom = {
   id: RoomId;

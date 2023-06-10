@@ -51,7 +51,7 @@ function carveRooms(tiles: Tiles, node: Node<Room>) {
           case "room":
             tiles[posY][posX] = TILES_TYPES.ROOM;
             break;
-          case "room":
+          case "boss":
             tiles[posY][posX] = TILES_TYPES.BOSS;
             break;
           case "end":
