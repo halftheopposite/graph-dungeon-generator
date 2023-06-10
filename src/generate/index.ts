@@ -1,6 +1,7 @@
 import {
   CORRIDOR_ITERATIONS_MAX,
   CORRIDOR_WIDTH,
+  ROOM_BACKTRACK_ITERATIONS_MAX,
   ROOM_DISTANCE_MAX,
   ROOM_DISTANCE_MIN,
   ROOM_ITERATIONS_MAX,
@@ -73,14 +74,38 @@ function placeRooms(rootNode: Node<Room>) {
 
   // Initialize the queue with the root node
   const queue: Node<Room>[] = [rootNode];
+  let backTrackIterations = ROOM_BACKTRACK_ITERATIONS_MAX;
 
   // Treat all the nodes we add to the queue (Breadth-First Search)
   while (queue.length > 0) {
     const node = queue.shift() as Node<Room>;
 
     // Attempt to place room and corridor
-    placeRoom(aabbManager, node);
-    placeCorridor(aabbManager, node);
+    try {
+      placeRoom(aabbManager, node);
+      placeCorridor(aabbManager, node);
+    } catch (error) {
+      // If we can't place a room or a corridor we will go back to
+      // its parent node and delete all existing children. We will
+      // then attempt to generate the parent again.
+
+      if (backTrackIterations === 0) {
+        throw new Error(`Could not backtrack room generation under `);
+      }
+
+      const parent = node.parent!;
+
+      // Unshift parent node of current node back in front of the queue
+      queue.unshift(parent);
+
+      // Delete children AABBs
+      for (const child of parent?.children) {
+        aabbManager.removeBox(`room-${child.value.id}`);
+        aabbManager.removeBox(`corridor-${child.value.id}`);
+      }
+
+      backTrackIterations -= 1;
+    }
 
     // Enqueue the children of the current node
     for (const child of node.children) {
@@ -108,7 +133,7 @@ function placeRoom(
 
   // Create box to check for collisions
   const box: AABB = {
-    id: node.value.id,
+    id: `room-${node.value.id}`,
     startX: position.x,
     startY: position.y,
     endX: position.x + dimensions.width,
@@ -145,7 +170,7 @@ function placeCorridor(
 
   // Create box to check for collisions
   const box: AABB = {
-    id: node.value.id,
+    id: `corridor-${node.value.id}`,
     startX: corridor.position.x,
     startY: corridor.position.y,
     endX: corridor.position.x + corridor.dimensions.width,
