@@ -1,6 +1,4 @@
 import {
-  DUNGEON_HEIGHT_UNIT,
-  DUNGEON_WIDTH_UNIT,
   TILE_CORRIDOR,
   TILE_CORRIDOR_COLOR,
   TILE_SIZE,
@@ -13,10 +11,13 @@ import {
   TILE_WALL,
   TILE_WALL_COLOR,
 } from "../config";
-import { Node, Room, Tile, Tiles } from "../types";
+import { Dimensions, Node, Room, Tile, Tiles } from "../types";
 import { getRoomCenter, traverseTree } from "../utils";
 import { initializeContext } from "./canvas";
-import { createTiles as initializeTilemap } from "./utils";
+import {
+  getDungeonDimensions,
+  createTiles as initializeTilemap,
+} from "./utils";
 
 /**
  * Entrypoint method to:
@@ -28,11 +29,12 @@ export function draw(rootNode: Node<Room>) {
   const context = initializeContext();
 
   // Find dungeon's width and height
+  const dimensions = getDungeonDimensions(rootNode);
 
   // Create empty tilesmap
   const tiles = initializeTilemap(
-    DUNGEON_WIDTH_UNIT,
-    DUNGEON_HEIGHT_UNIT,
+    dimensions.width,
+    dimensions.height,
     TILE_WALL
   );
 
@@ -42,7 +44,7 @@ export function draw(rootNode: Node<Room>) {
 
   // Draw everything on a canvas
   drawTiles(context, tiles);
-  drawGrid(context);
+  drawGrid(context, dimensions);
   drawConnections(context, rootNode);
   drawRoomIds(context, rootNode);
 }
@@ -165,21 +167,26 @@ function drawRoomIds(context: CanvasRenderingContext2D, rootNode: Node<Room>) {
   }, rootNode);
 }
 
-function drawGrid(context: CanvasRenderingContext2D) {
+function drawGrid(context: CanvasRenderingContext2D, dimensions: Dimensions) {
   context.lineWidth = 0.5;
   context.strokeStyle = "white";
 
-  for (let x = 0; x < DUNGEON_WIDTH_UNIT * TILE_SIZE; x += TILE_SIZE) {
+  const pixelWidth = dimensions.width * TILE_SIZE;
+  const pixelHeight = dimensions.height * TILE_SIZE;
+
+  // Draw columns
+  for (let x = 0; x <= pixelWidth; x += TILE_SIZE) {
     context.beginPath();
     context.moveTo(x, 0);
-    context.lineTo(x, DUNGEON_HEIGHT_UNIT * TILE_SIZE);
+    context.lineTo(x, pixelHeight);
     context.stroke();
   }
 
-  for (let y = 0; y < DUNGEON_HEIGHT_UNIT * TILE_SIZE; y += TILE_SIZE) {
+  // Draw rows
+  for (let y = 0; y <= pixelHeight; y += TILE_SIZE) {
     context.beginPath();
     context.moveTo(0, y);
-    context.lineTo(DUNGEON_WIDTH_UNIT * TILE_SIZE, y);
+    context.lineTo(pixelWidth, y);
     context.stroke();
   }
 }
