@@ -9,6 +9,8 @@ import { getDungeonDimensions, initializeTilemap } from "./utils";
  * - Get a reference to the Canvas' context
  * - Transform rooms and corridors to tiles
  * - Draw widgets such as room names and connections
+ *
+ * Note: all transformations to data are done by reference.
  */
 export function draw(rootNode: Node<Room>) {
   const context = initializeContext();
@@ -23,7 +25,7 @@ export function draw(rootNode: Node<Room>) {
     TILES_TYPES.WALL
   );
 
-  // Carve rooms and corridors into tilesmap
+  // Carve rooms and corridors into the tilesmap
   carveRooms(tiles, rootNode);
   carveCorridors(tiles, rootNode);
 
@@ -39,10 +41,14 @@ export function draw(rootNode: Node<Room>) {
 //
 function carveRooms(tiles: Tiles, node: Node<Room>) {
   traverseTree((node) => {
-    for (let y = 0; y < node.value.dimensions!.height; y++) {
-      for (let x = 0; x < node.value.dimensions!.width; x++) {
-        const posY = node.value.position!.y + y;
-        const posX = node.value.position!.x + x;
+    if (!node.value.position || !node.value.dimensions) {
+      return;
+    }
+
+    for (let y = 0; y < node.value.dimensions.height; y++) {
+      for (let x = 0; x < node.value.dimensions.width; x++) {
+        const posY = node.value.position.y + y;
+        const posX = node.value.position.x + x;
 
         switch (node.value.type) {
           case "start":
@@ -69,10 +75,10 @@ function carveCorridors(tiles: Tiles, node: Node<Room>) {
       return;
     }
 
-    for (let y = 0; y < node.value.corridor!.dimensions!.height; y++) {
-      for (let x = 0; x < node.value.corridor!.dimensions!.width; x++) {
-        const posY = node.value.corridor.position!.y + y;
-        const posX = node.value.corridor.position!.x + x;
+    for (let y = 0; y < node.value.corridor.dimensions.height; y++) {
+      for (let x = 0; x < node.value.corridor.dimensions.width; x++) {
+        const posY = node.value.corridor.position.y + y;
+        const posX = node.value.corridor.position.x + x;
 
         tiles[posY][posX] = TILES_TYPES.CORRIDOR;
       }
@@ -162,22 +168,22 @@ function drawGrid(context: CanvasRenderingContext2D, dimensions: Dimensions) {
   context.lineWidth = 0.5;
   context.strokeStyle = "white";
 
-  const pixelWidth = dimensions.width * TILE_SIZE;
-  const pixelHeight = dimensions.height * TILE_SIZE;
+  const dungeonWidthInPixel = dimensions.width * TILE_SIZE;
+  const dungeonHeightInPixel = dimensions.height * TILE_SIZE;
 
   // Draw columns
-  for (let x = 0; x <= pixelWidth; x += TILE_SIZE) {
+  for (let x = 0; x <= dungeonWidthInPixel; x += TILE_SIZE) {
     context.beginPath();
     context.moveTo(x, 0);
-    context.lineTo(x, pixelHeight);
+    context.lineTo(x, dungeonHeightInPixel);
     context.stroke();
   }
 
   // Draw rows
-  for (let y = 0; y <= pixelHeight; y += TILE_SIZE) {
+  for (let y = 0; y <= dungeonHeightInPixel; y += TILE_SIZE) {
     context.beginPath();
     context.moveTo(0, y);
-    context.lineTo(pixelWidth, y);
+    context.lineTo(dungeonWidthInPixel, y);
     context.stroke();
   }
 }
