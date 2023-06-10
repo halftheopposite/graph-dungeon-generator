@@ -22,6 +22,9 @@ export type Tiles = number[][];
 //
 // Dungeon - Input value given to generate graph.
 //
+export type RoomId = string;
+export type RoomType = "start" | "room" | "end";
+
 export type InputRoom = {
   id: RoomId;
   type: RoomType;
@@ -35,9 +38,6 @@ export type InputDungeon = {
 //
 // Room
 //
-export type RoomId = string;
-export type RoomType = "start" | "room" | "end";
-
 export type Corridor = {
   position: Vector2;
   dimensions: Dimensions;

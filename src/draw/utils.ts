@@ -1,7 +1,7 @@
 import { Dimensions, Node, Room, Tiles } from "../types";
 import { traverseTree } from "../utils";
 
-export function createTiles(
+export function initializeTilemap(
   width: number,
   height: number,
   fill: number

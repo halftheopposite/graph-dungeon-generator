@@ -1,23 +1,8 @@
-import {
-  TILE_CORRIDOR,
-  TILE_CORRIDOR_COLOR,
-  TILE_SIZE,
-  TILE_VOID_END,
-  TILE_VOID_END_COLOR,
-  TILE_VOID_ROOM,
-  TILE_VOID_ROOM_COLOR,
-  TILE_VOID_START,
-  TILE_VOID_START_COLOR,
-  TILE_WALL,
-  TILE_WALL_COLOR,
-} from "../config";
+import { TILE_SIZE, TILES_COLORS, TILES_TYPES } from "../config";
 import { Dimensions, Node, Room, Tile, Tiles } from "../types";
 import { getRoomCenter, traverseTree } from "../utils";
 import { initializeContext } from "./canvas";
-import {
-  getDungeonDimensions,
-  createTiles as initializeTilemap,
-} from "./utils";
+import { getDungeonDimensions, initializeTilemap } from "./utils";
 
 /**
  * Entrypoint method to:
@@ -35,7 +20,7 @@ export function draw(rootNode: Node<Room>) {
   const tiles = initializeTilemap(
     dimensions.width,
     dimensions.height,
-    TILE_WALL
+    TILES_TYPES.WALL
   );
 
   // Carve rooms and corridors into tilesmap
@@ -61,13 +46,16 @@ function carveRooms(tiles: Tiles, node: Node<Room>) {
 
         switch (node.value.type) {
           case "start":
-            tiles[posY][posX] = TILE_VOID_START;
+            tiles[posY][posX] = TILES_TYPES.START;
             break;
           case "room":
-            tiles[posY][posX] = TILE_VOID_ROOM;
+            tiles[posY][posX] = TILES_TYPES.ROOM;
+            break;
+          case "room":
+            tiles[posY][posX] = TILES_TYPES.BOSS;
             break;
           case "end":
-            tiles[posY][posX] = TILE_VOID_END;
+            tiles[posY][posX] = TILES_TYPES.END;
             break;
         }
       }
@@ -86,7 +74,7 @@ function carveCorridors(tiles: Tiles, node: Node<Room>) {
         const posY = node.value.corridor.position!.y + y;
         const posX = node.value.corridor.position!.x + x;
 
-        tiles[posY][posX] = TILE_CORRIDOR;
+        tiles[posY][posX] = TILES_TYPES.CORRIDOR;
       }
     }
   }, node);
@@ -110,20 +98,23 @@ function drawTile(
   tile: Tile
 ) {
   switch (tile) {
-    case TILE_VOID_START:
-      context.fillStyle = TILE_VOID_START_COLOR;
+    case TILES_TYPES.START:
+      context.fillStyle = TILES_COLORS.START;
       break;
-    case TILE_VOID_ROOM:
-      context.fillStyle = TILE_VOID_ROOM_COLOR;
+    case TILES_TYPES.ROOM:
+      context.fillStyle = TILES_COLORS.ROOM;
       break;
-    case TILE_VOID_END:
-      context.fillStyle = TILE_VOID_END_COLOR;
+    case TILES_TYPES.BOSS:
+      context.fillStyle = TILES_COLORS.BOSS;
       break;
-    case TILE_WALL:
-      context.fillStyle = TILE_WALL_COLOR;
+    case TILES_TYPES.CORRIDOR:
+      context.fillStyle = TILES_COLORS.CORRIDOR;
       break;
-    case TILE_CORRIDOR:
-      context.fillStyle = TILE_CORRIDOR_COLOR;
+    case TILES_TYPES.END:
+      context.fillStyle = TILES_COLORS.END;
+      break;
+    case TILES_TYPES.WALL:
+      context.fillStyle = TILES_COLORS.WALL;
       break;
   }
 
