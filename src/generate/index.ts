@@ -98,6 +98,10 @@ function placeRooms(rootNode: Node<Room>) {
       // Unshift parent node of current node back in front of the queue
       queue.unshift(parent);
 
+      // Delete parent AABB
+      aabbManager.removeBox(`room-${parent.value.id}`);
+      aabbManager.removeBox(`corridor-${parent.value.id}`);
+
       // Delete children AABBs
       for (const child of parent?.children) {
         aabbManager.removeBox(`room-${child.value.id}`);
@@ -183,6 +187,7 @@ function placeCorridor(
   }
 
   node.value.corridor = corridor;
+  aabbManager.addBox(box);
 }
 
 //

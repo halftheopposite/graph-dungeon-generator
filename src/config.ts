@@ -18,7 +18,7 @@ export enum TILES_COLORS {
   WALL = "rgb(0,0,0)",
 }
 
-export const ROOM_BACKTRACK_ITERATIONS_MAX = 10;
+export const ROOM_BACKTRACK_ITERATIONS_MAX = 1000;
 export const ROOM_ITERATIONS_MAX = 20;
 export const ROOM_DISTANCE_MIN = 3;
 export const ROOM_DISTANCE_MAX = 6;
