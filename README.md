@@ -15,9 +15,16 @@ Want to try the generator? Click [here](https://halftheopposite.github.io/graph-
 
 Given the same input graph, we can generate many dungeon shapes and pattern.
 
-|-----------------------------|-----------------------------|
-| ![](./assets/dungeon-1.png) | ![](./assets/dungeon-2.png) |
-| ![](./assets/dungeon-3.png) | ![](./assets/dungeon-4.png) |
+<table>
+    <tr>
+        <td><img src="assets/dungeon-1.png"></td>
+        <td><img src="assets/dungeon-2.png"></td>
+    </tr>
+    <tr>
+        <td><img src="assets/dungeon-3.png"></td>
+        <td><img src="assets/dungeon-4.png"></td>
+    </tr> 
+</table>
 
 ## Architecture
 
