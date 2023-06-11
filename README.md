@@ -2,19 +2,39 @@
 
 A simple graph-based procedural dungeon generator.
 
-Want to try the generator? Click [here](https://halftheopposite.github.io/graph-dungeon-generator/) and have some fun.
+Want to try the generator? Click [here](https://halftheopposite.github.io/graph-dungeon-generator/) and have some fun 🧙‍♂️.
+
+## Running the project
+
+1. Clone the repository.
+2. Run `yarn` to install dependencies.
+3. Run `yarn dev` to build and run the project and listen for changes.
+4. Finally, double-click the `public/index.html` file to open the generator in your browser.
+
+## Examples
+
+Given the same input graph, we can generate many dungeon shapes and pattern.
+
+|-----------------------------|-----------------------------|
+| ![](./assets/dungeon-1.png) | ![](./assets/dungeon-2.png) |
+| ![](./assets/dungeon-3.png) | ![](./assets/dungeon-4.png) |
 
 ## Architecture
 
 The project is split into 3 distinct modules (aka folders) in an effort to make it simpler to decouple responsabilities:
 
-- `/draw`
-- `/generate`
-- `/graphs`
+- `/generate`: where all the generation code lies (returns an `Node<Room>` tree).
+- `/draw`: where we take the `Node<Room>` tree, generate a tilesmap, and render it to an HTML canvas with some debugging information.
+- `/graphs`: the list of input files used to generate the dungeon. Currently written in TypeScript for type safety, but could as well be JSON files.
 
 ## What can it do?
 
-It takes a input graph which determine in which order should the rooms of the dungeon be drawn, and outputs
+- Generate a dungeon given a non-circular graph
+- Backtracking when it cannot find a suitable spot for a child node
+- Elegantly place the corridors between rooms
+- Transform a node tree into a tilesmap
+- Render contextual information for convenience
+- Easily modifiable to add new room types and colors
 
 ## What can't it do?
 
