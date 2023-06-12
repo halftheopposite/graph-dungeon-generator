@@ -1,8 +1,8 @@
-import { TILE_SIZE, TILES_COLORS, TILES_TYPES } from "../config";
+import { TILES_COLORS, TILES_TYPES } from "../config";
 import { Dimensions, Node, Room, Tile, Tiles } from "../types";
 import { getRoomCenter, traverseTree } from "../utils";
 import { initializeContext } from "./canvas";
-import { getDungeonDimensions, initializeTilemap } from "./utils";
+import { getDungeonDimensions, getTileSize, initializeTilemap } from "./utils";
 
 /**
  * Entrypoint method to:
@@ -13,15 +13,16 @@ import { getDungeonDimensions, initializeTilemap } from "./utils";
  * Note: all transformations to data are done by reference.
  */
 export function draw(rootNode: Node<Room>) {
-  const context = initializeContext();
+  const { context, canvasDimensions } = initializeContext();
 
   // Find dungeon's width and height
-  const dimensions = getDungeonDimensions(rootNode);
+  const dungeonDimensions = getDungeonDimensions(rootNode);
+  const tileSize = getTileSize(canvasDimensions, dungeonDimensions);
 
   // Create empty tilesmap
   const tiles = initializeTilemap(
-    dimensions.width,
-    dimensions.height,
+    dungeonDimensions.width,
+    dungeonDimensions.height,
     TILES_TYPES.WALL
   );
 
@@ -30,10 +31,10 @@ export function draw(rootNode: Node<Room>) {
   carveCorridors(tiles, rootNode);
 
   // Draw everything on a canvas
-  drawTiles(context, tiles);
-  drawGrid(context, dimensions);
-  drawConnections(context, rootNode);
-  drawRoomIds(context, rootNode);
+  drawGrid(context, tileSize, canvasDimensions);
+  drawTiles(context, tileSize, tiles);
+  drawConnections(context, tileSize, rootNode);
+  drawRoomIds(context, tileSize, rootNode);
 }
 
 //
@@ -89,16 +90,46 @@ function carveCorridors(tiles: Tiles, node: Node<Room>) {
 //
 // Draw
 //
-function drawTiles(context: CanvasRenderingContext2D, tiles: Tiles) {
+function drawGrid(
+  context: CanvasRenderingContext2D,
+  tileSize: number,
+  canvasDimensions: Dimensions
+) {
+  context.beginPath();
+  context.lineWidth = 0.5;
+  context.strokeStyle = "rgba(0,200,0,0.5)";
+
+  // Draw columns
+  for (let x = 0.5; x < canvasDimensions.width; x += tileSize) {
+    context.moveTo(x, 0);
+    context.lineTo(x, canvasDimensions.height);
+  }
+
+  // Draw rows
+  for (let y = 0.5; y < canvasDimensions.height; y += tileSize) {
+    context.moveTo(0, y);
+    context.lineTo(canvasDimensions.width, y);
+  }
+
+  context.stroke();
+  context.closePath();
+}
+
+function drawTiles(
+  context: CanvasRenderingContext2D,
+  tileSize: number,
+  tiles: Tiles
+) {
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
-      drawTile(context, x, y, tiles[y][x]);
+      drawTile(context, tileSize, x, y, tiles[y][x]);
     }
   }
 }
 
 function drawTile(
   context: CanvasRenderingContext2D,
+  tileSize: number,
   x: number,
   y: number,
   tile: Tile
@@ -124,13 +155,15 @@ function drawTile(
       break;
   }
 
-  context.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  context.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
 }
 
 function drawConnections(
   context: CanvasRenderingContext2D,
+  tileSize: number,
   rootNode: Node<Room>
 ) {
+  context.beginPath();
   context.lineWidth = 1.5;
   context.strokeStyle = "white";
 
@@ -140,15 +173,20 @@ function drawConnections(
     node.children.forEach((child) => {
       const childCenter = getRoomCenter(child);
 
-      context.moveTo(parentCenter.x * TILE_SIZE, parentCenter.y * TILE_SIZE);
-      context.lineTo(childCenter.x * TILE_SIZE, childCenter.y * TILE_SIZE);
+      context.moveTo(parentCenter.x * tileSize, parentCenter.y * tileSize);
+      context.lineTo(childCenter.x * tileSize, childCenter.y * tileSize);
     });
   }, rootNode);
 
   context.stroke();
+  context.closePath();
 }
 
-function drawRoomIds(context: CanvasRenderingContext2D, rootNode: Node<Room>) {
+function drawRoomIds(
+  context: CanvasRenderingContext2D,
+  tileSize: number,
+  rootNode: Node<Room>
+) {
   context.font = "16px Arial";
   context.fillStyle = "white";
   context.textAlign = "center";
@@ -158,32 +196,8 @@ function drawRoomIds(context: CanvasRenderingContext2D, rootNode: Node<Room>) {
 
     context.fillText(
       node.value.id,
-      parentCenter.x * TILE_SIZE,
-      parentCenter.y * TILE_SIZE
+      parentCenter.x * tileSize,
+      parentCenter.y * tileSize
     );
   }, rootNode);
-}
-
-function drawGrid(context: CanvasRenderingContext2D, dimensions: Dimensions) {
-  context.lineWidth = 0.5;
-  context.strokeStyle = "white";
-
-  const dungeonWidthInPixel = dimensions.width * TILE_SIZE;
-  const dungeonHeightInPixel = dimensions.height * TILE_SIZE;
-
-  // Draw columns
-  for (let x = 0; x <= dungeonWidthInPixel; x += TILE_SIZE) {
-    context.beginPath();
-    context.moveTo(x, 0);
-    context.lineTo(x, dungeonHeightInPixel);
-    context.stroke();
-  }
-
-  // Draw rows
-  for (let y = 0; y <= dungeonHeightInPixel; y += TILE_SIZE) {
-    context.beginPath();
-    context.moveTo(0, y);
-    context.lineTo(dungeonWidthInPixel, y);
-    context.stroke();
-  }
 }

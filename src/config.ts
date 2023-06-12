@@ -10,12 +10,12 @@ export enum TILES_TYPES {
 }
 
 export enum TILES_COLORS {
-  START = "rgb(0,127,0)",
-  ROOM = "rgb(0,0,127)",
-  BOSS = "rgb(127,0,127)",
-  CORRIDOR = "rgb(127,127,0)",
-  END = "rgb(127,0,0)",
-  WALL = "rgb(0,0,0)",
+  START = "rgba(0,127,0,1)",
+  ROOM = "rgba(0,0,127,1)",
+  BOSS = "rgba(127,0,127,1)",
+  CORRIDOR = "rgba(127,127,0,1)",
+  END = "rgba(127,0,0,1)",
+  WALL = "rgba(0,0,0,0)",
 }
 
 export const ROOM_BACKTRACK_ITERATIONS_MAX = 1000;

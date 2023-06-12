@@ -42,3 +42,17 @@ export function getDungeonDimensions(rootNode: Node<Room>): Dimensions {
 
   return dimensions;
 }
+
+export function getTileSize(
+  canvasDimensions: Dimensions,
+  dungeonDimensions: Dimensions
+): number {
+  const tileWidth = Math.floor(
+    canvasDimensions.width / dungeonDimensions.width
+  );
+  const tileHeight = Math.floor(
+    canvasDimensions.height / dungeonDimensions.height
+  );
+
+  return tileWidth < tileHeight ? tileWidth : tileHeight;
+}

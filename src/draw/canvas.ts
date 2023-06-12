@@ -1,4 +1,9 @@
-export function initializeContext(): CanvasRenderingContext2D {
+import { Dimensions } from "../types";
+
+export function initializeContext(): {
+  context: CanvasRenderingContext2D;
+  canvasDimensions: Dimensions;
+} {
   //
   // Canvas
   //
@@ -18,5 +23,11 @@ export function initializeContext(): CanvasRenderingContext2D {
     throw new Error(`Could not get context.`);
   }
 
-  return context;
+  return {
+    context,
+    canvasDimensions: {
+      width: canvas.width,
+      height: canvas.height,
+    },
+  };
 }
