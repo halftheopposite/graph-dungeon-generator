@@ -1,6 +1,5 @@
 (() => {
   // src/config.ts
-  var TILE_SIZE = 16;
   var ROOM_BACKTRACK_ITERATIONS_MAX = 1e3;
   var ROOM_ITERATIONS_MAX = 20;
   var ROOM_DISTANCE_MIN = 3;
@@ -40,7 +39,13 @@
     if (!context) {
       throw new Error(`Could not get context.`);
     }
-    return context;
+    return {
+      context,
+      canvasDimensions: {
+        width: canvas.width,
+        height: canvas.height
+      }
+    };
   }
 
   // src/draw/utils.ts
@@ -74,22 +79,32 @@
     }, rootNode);
     return dimensions;
   }
+  function getTileSize(canvasDimensions, dungeonDimensions) {
+    const tileWidth = Math.floor(
+      canvasDimensions.width / dungeonDimensions.width
+    );
+    const tileHeight = Math.floor(
+      canvasDimensions.height / dungeonDimensions.height
+    );
+    return tileWidth < tileHeight ? tileWidth : tileHeight;
+  }
 
   // src/draw/index.ts
   function draw(rootNode) {
-    const context = initializeContext();
-    const dimensions = getDungeonDimensions(rootNode);
+    const { context, canvasDimensions } = initializeContext();
+    const dungeonDimensions = getDungeonDimensions(rootNode);
+    const tileSize = getTileSize(canvasDimensions, dungeonDimensions);
     const tiles = initializeTilemap(
-      dimensions.width,
-      dimensions.height,
+      dungeonDimensions.width,
+      dungeonDimensions.height,
       6 /* WALL */
     );
     carveRooms(tiles, rootNode);
     carveCorridors(tiles, rootNode);
-    drawTiles(context, tiles);
-    drawGrid(context, dimensions);
-    drawConnections(context, rootNode);
-    drawRoomIds(context, rootNode);
+    drawGrid(context, tileSize, canvasDimensions);
+    drawTiles(context, tileSize, tiles);
+    drawConnections(context, tileSize, rootNode);
+    drawRoomIds(context, tileSize, rootNode);
   }
   function carveRooms(tiles, node) {
     traverseTree((node2) => {
@@ -132,50 +147,67 @@
       }
     }, node);
   }
-  function drawTiles(context, tiles) {
+  function drawGrid(context, tileSize, canvasDimensions) {
+    context.beginPath();
+    context.lineWidth = 0.5;
+    context.strokeStyle = "rgba(0,200,0,0.5)";
+    for (let x = 0.5; x < canvasDimensions.width; x += tileSize) {
+      context.moveTo(x, 0);
+      context.lineTo(x, canvasDimensions.height);
+    }
+    for (let y = 0.5; y < canvasDimensions.height; y += tileSize) {
+      context.moveTo(0, y);
+      context.lineTo(canvasDimensions.width, y);
+    }
+    context.stroke();
+    context.closePath();
+  }
+  function drawTiles(context, tileSize, tiles) {
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        drawTile(context, x, y, tiles[y][x]);
+        drawTile(context, tileSize, x, y, tiles[y][x]);
       }
     }
   }
-  function drawTile(context, x, y, tile) {
+  function drawTile(context, tileSize, x, y, tile) {
     switch (tile) {
       case 1 /* START */:
-        context.fillStyle = "rgb(0,127,0)" /* START */;
+        context.fillStyle = "rgba(0,127,0,1)" /* START */;
         break;
       case 2 /* ROOM */:
-        context.fillStyle = "rgb(0,0,127)" /* ROOM */;
+        context.fillStyle = "rgba(0,0,127,1)" /* ROOM */;
         break;
       case 3 /* BOSS */:
-        context.fillStyle = "rgb(127,0,127)" /* BOSS */;
+        context.fillStyle = "rgba(127,0,127,1)" /* BOSS */;
         break;
       case 4 /* CORRIDOR */:
-        context.fillStyle = "rgb(127,127,0)" /* CORRIDOR */;
+        context.fillStyle = "rgba(127,127,0,1)" /* CORRIDOR */;
         break;
       case 5 /* END */:
-        context.fillStyle = "rgb(127,0,0)" /* END */;
+        context.fillStyle = "rgba(127,0,0,1)" /* END */;
         break;
       case 6 /* WALL */:
-        context.fillStyle = "rgb(0,0,0)" /* WALL */;
+        context.fillStyle = "rgba(0,0,0,0)" /* WALL */;
         break;
     }
-    context.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    context.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
   }
-  function drawConnections(context, rootNode) {
+  function drawConnections(context, tileSize, rootNode) {
+    context.beginPath();
     context.lineWidth = 1.5;
     context.strokeStyle = "white";
     traverseTree((node) => {
       const parentCenter = getRoomCenter(node);
       node.children.forEach((child) => {
         const childCenter = getRoomCenter(child);
-        context.moveTo(parentCenter.x * TILE_SIZE, parentCenter.y * TILE_SIZE);
-        context.lineTo(childCenter.x * TILE_SIZE, childCenter.y * TILE_SIZE);
+        context.moveTo(parentCenter.x * tileSize, parentCenter.y * tileSize);
+        context.lineTo(childCenter.x * tileSize, childCenter.y * tileSize);
       });
     }, rootNode);
     context.stroke();
+    context.closePath();
   }
-  function drawRoomIds(context, rootNode) {
+  function drawRoomIds(context, tileSize, rootNode) {
     context.font = "16px Arial";
     context.fillStyle = "white";
     context.textAlign = "center";
@@ -183,28 +215,10 @@
       const parentCenter = getRoomCenter(node);
       context.fillText(
         node.value.id,
-        parentCenter.x * TILE_SIZE,
-        parentCenter.y * TILE_SIZE
+        parentCenter.x * tileSize,
+        parentCenter.y * tileSize
       );
     }, rootNode);
-  }
-  function drawGrid(context, dimensions) {
-    context.lineWidth = 0.5;
-    context.strokeStyle = "white";
-    const dungeonWidthInPixel = dimensions.width * TILE_SIZE;
-    const dungeonHeightInPixel = dimensions.height * TILE_SIZE;
-    for (let x = 0; x <= dungeonWidthInPixel; x += TILE_SIZE) {
-      context.beginPath();
-      context.moveTo(x, 0);
-      context.lineTo(x, dungeonHeightInPixel);
-      context.stroke();
-    }
-    for (let y = 0; y <= dungeonHeightInPixel; y += TILE_SIZE) {
-      context.beginPath();
-      context.moveTo(0, y);
-      context.lineTo(dungeonWidthInPixel, y);
-      context.stroke();
-    }
   }
 
   // src/types.ts
