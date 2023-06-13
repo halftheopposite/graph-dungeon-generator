@@ -4,32 +4,17 @@ export const LARGE: InputDungeon = {
   start: {
     id: "start",
     type: "start",
-    children: ["A", "G"],
+    children: ["A", "F"],
   },
   A: {
     id: "A",
     type: "room",
-    children: ["B", "C"],
-  },
-  G: {
-    id: "G",
-    type: "room",
-    children: ["H", "I"],
-  },
-  H: {
-    id: "H",
-    type: "room",
-    children: [],
-  },
-  I: {
-    id: "I",
-    type: "room",
-    children: [],
+    children: ["B"],
   },
   B: {
     id: "B",
     type: "room",
-    children: ["D", "E"],
+    children: ["C", "D"],
   },
   C: {
     id: "C",
@@ -39,25 +24,45 @@ export const LARGE: InputDungeon = {
   D: {
     id: "D",
     type: "room",
-    children: ["F", "boss"],
+    children: ["E"],
   },
   E: {
     id: "E",
-    type: "room",
-    children: ["J", "K"],
-  },
-  J: {
-    id: "J",
-    type: "room",
-    children: [],
-  },
-  K: {
-    id: "K",
     type: "room",
     children: [],
   },
   F: {
     id: "F",
+    type: "room",
+    children: ["G", "H"],
+  },
+  G: {
+    id: "G",
+    type: "room",
+    children: [],
+  },
+  H: {
+    id: "H",
+    type: "room",
+    children: ["I"],
+  },
+  I: {
+    id: "I",
+    type: "room",
+    children: ["J"],
+  },
+  J: {
+    id: "J",
+    type: "room",
+    children: ["K", "L"],
+  },
+  K: {
+    id: "K",
+    type: "room",
+    children: ["boss"],
+  },
+  L: {
+    id: "L",
     type: "room",
     children: [],
   },
