@@ -1,5 +1,3 @@
-export const TILE_SIZE = 16;
-
 export enum TILES_TYPES {
   START = 1,
   ROOM = 2,

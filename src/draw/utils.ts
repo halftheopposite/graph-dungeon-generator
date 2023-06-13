@@ -1,6 +1,9 @@
 import { Dimensions, Node, Room, Tiles } from "../types";
 import { traverseTree } from "../utils";
 
+/**
+ * Initialize an array of array with the `fill` value.
+ */
 export function initializeTilemap(
   width: number,
   height: number,
@@ -18,6 +21,9 @@ export function initializeTilemap(
   return tiles;
 }
 
+/**
+ * Get the dungeon width and height in tiles unit.
+ */
 export function getDungeonDimensions(rootNode: Node<Room>): Dimensions {
   let dimensions: Dimensions = {
     width: 0,
@@ -43,6 +49,9 @@ export function getDungeonDimensions(rootNode: Node<Room>): Dimensions {
   return dimensions;
 }
 
+/**
+ * Get the scaled tile size to ensure the dungeon fits into the window.
+ */
 export function getTileSize(
   canvasDimensions: Dimensions,
   dungeonDimensions: Dimensions

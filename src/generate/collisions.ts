@@ -8,6 +8,9 @@ export type AABB = {
   endY: number;
 };
 
+/**
+ * A bounding box manager to keep track of boxes and check for collisions.
+ */
 export class AABBManager {
   private boxes: {
     [id: string]: AABB;

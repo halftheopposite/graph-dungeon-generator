@@ -1,13 +1,16 @@
 import { draw } from "./draw";
 import { generate } from "./generate";
-import { LARGE } from "./graphs";
+import { LARGE, MEDIUM } from "./graphs";
+import { InputDungeon } from "./types";
 import { logStep } from "./utils";
+
+let inputGraph: InputDungeon = MEDIUM;
 
 /**
  * Entry point to run a dungeon generation and drawing it 🧙‍♂️.
  */
 function generateAndDraw() {
-  const rootNode = logStep(`Generate ✅`, () => generate(LARGE));
+  const rootNode = logStep(`Generate ✅`, () => generate(inputGraph));
   logStep(`Draw ✅`, () => draw(rootNode));
 }
 
@@ -34,11 +37,32 @@ function testGenerationSuccessRate() {
 window.onload = () => {
   generateAndDraw();
 
+  // Graph selection
+  const selectGraph = document.getElementById(
+    "select-graph"
+  ) as HTMLSelectElement;
+  selectGraph.onchange = (event) => {
+    const value = (event.currentTarget as HTMLSelectElement).value;
+    switch (value) {
+      case "medium":
+        inputGraph = MEDIUM;
+        break;
+      case "large":
+        inputGraph = LARGE;
+        break;
+    }
+
+    // Once the value changes, we generate and draw the dungeon again
+    generateAndDraw();
+  };
+
+  // Generate
   const buttonGenerate = document.getElementById(
     "button-generate"
   ) as HTMLButtonElement;
   buttonGenerate.onclick = () => generateAndDraw();
 
+  // GitHub repository
   const buttonGitHub = document.getElementById(
     "button-github"
   ) as HTMLButtonElement;
