@@ -4,40 +4,45 @@ export const MEDIUM: InputDungeon = {
   start: {
     id: "start",
     type: "start",
-    children: ["A", "G"],
+    children: ["A", "B"],
   },
   A: {
     id: "A",
     type: "room",
-    children: ["B", "C"],
-  },
-  G: {
-    id: "G",
-    type: "room",
-    children: [],
+    children: ["C"],
   },
   B: {
     id: "B",
     type: "room",
-    children: ["D", "E"],
+    children: ["D"],
   },
   C: {
     id: "C",
     type: "room",
-    children: [],
+    children: ["E", "F"],
   },
   D: {
     id: "D",
     type: "room",
-    children: ["F", "end"],
+    children: [],
   },
   E: {
     id: "E",
     type: "room",
-    children: [],
+    children: ["boss"],
   },
   F: {
     id: "F",
+    type: "room",
+    children: [],
+  },
+  boss: {
+    id: "boss",
+    type: "boss",
+    children: ["G", "end"],
+  },
+  G: {
+    id: "G",
     type: "room",
     children: [],
   },
