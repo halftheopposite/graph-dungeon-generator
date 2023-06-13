@@ -194,6 +194,13 @@ function placeCorridor(
 // Utils
 //
 function generateRoomDimensions(node: Node<Room>): Dimensions {
+  // Note:
+  // Instead of using random widths and heights to generate room
+  // you could instead use a pool of existing, pre-made rooms that
+  // you would randomly pick and place during the generation. This
+  // would make it easier to have rooms that are already designed
+  // and filled up with items, enemies, props, etc.
+  // See my other project: https://github.com/halftheopposite/dungeon.
   switch (node.value.type) {
     case "start":
       return {
