@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "esbuild ./src/index.ts --bundle --outfile=public/index.js --watch",
-    "build": "esbuild ./src/index.ts --bundle --outfile=public/index.js"
+    "build": "esbuild ./src/index.ts --bundle --minify --outfile=public/index.js"
   },
   "devDependencies": {
     "esbuild": "^0.17.19",
