@@ -3,14 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Circular graph dungeon generator</title>
+    <title>Graph dungeon generator 🧙‍♂️</title>
     <script src="index.js"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <!-- Drawing -->
     <canvas id="canvas"></canvas>
+
+    <!-- Buttons -->
     <div class="buttons-container">
-      <button id="button-generate" class="button">Generate 🧙‍♂️</button>
+      <select id="select-graph" class="button">
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+      </select>
+
+      <button id="button-generate" class="button" style="margin-left: 16px">
+        Generate 🧙‍♂️
+      </button>
+
       <button id="button-github" class="button" style="margin-left: 16px">
         <img src="github-mark.svg" width="24px" height="24px" />
       </button>
