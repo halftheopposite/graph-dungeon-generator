@@ -1,10 +1,10 @@
 import { draw } from "./draw";
 import { generate } from "./generate";
-import { LARGE, MEDIUM } from "./graphs";
+import { LARGE, MEDIUM, SMALL } from "./graphs";
 import { InputDungeon } from "./types";
 import { logStep } from "./utils";
 
-let inputGraph: InputDungeon = MEDIUM;
+let inputGraph: InputDungeon = SMALL;
 
 /**
  * Entry point to run a dungeon generation and drawing it 🧙‍♂️.
@@ -44,6 +44,9 @@ window.onload = () => {
   selectGraph.onchange = (event) => {
     const value = (event.currentTarget as HTMLSelectElement).value;
     switch (value) {
+      case "small":
+        inputGraph = SMALL;
+        break;
       case "medium":
         inputGraph = MEDIUM;
         break;
