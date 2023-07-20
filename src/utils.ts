@@ -1,4 +1,4 @@
-import { Node, Room, Vector2 } from "./types";
+import { Node, Room, Tiles, Vector2 } from "./types";
 
 export function traverseTree(fn: (node: Node<Room>) => void, node: Node<Room>) {
   fn(node);
@@ -25,4 +25,12 @@ export function logStep<T>(name: string, fn: () => T) {
   console.log(`${name} (${performance.now() - lastStepInMS}ms)`);
 
   return result;
+}
+
+export function printTiles(tiles: Tiles) {
+  let print = "";
+  tiles.forEach((row) => {
+    print = print.concat(row.join(""), "\n");
+  });
+  console.log(print);
 }

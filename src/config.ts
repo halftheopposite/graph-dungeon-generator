@@ -1,4 +1,4 @@
-export enum TILES_TYPES {
+export enum TilesTypes {
   START = 1,
   ROOM = 2,
   BOSS = 3,
@@ -7,12 +7,12 @@ export enum TILES_TYPES {
   WALL = 6,
 }
 
-export enum TILES_COLORS {
-  START = "rgba(0,127,0,1)",
-  ROOM = "rgba(0,0,127,1)",
-  BOSS = "rgba(127,0,127,1)",
-  CORRIDOR = "rgba(127,127,0,1)",
-  END = "rgba(127,0,0,1)",
+export enum TilesColors {
+  START = "rgba(0,127,0,0.5)",
+  ROOM = "rgba(0,0,127,0.5)",
+  BOSS = "rgba(127,0,127,0.5)",
+  CORRIDOR = "rgba(127,127,0,0.5)",
+  END = "rgba(127,0,0,0.5)",
   WALL = "rgba(0,0,0,0)",
 }
 

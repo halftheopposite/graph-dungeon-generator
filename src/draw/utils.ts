@@ -4,7 +4,7 @@ import { traverseTree } from "../utils";
 /**
  * Initialize an array of array with the `fill` value.
  */
-export function initializeTilemap(
+export function createTilemap(
   width: number,
   height: number,
   fill: number
@@ -19,6 +19,15 @@ export function initializeTilemap(
   }
 
   return tiles;
+}
+
+/**
+ * Create and return a deep copy of a tilemap.
+ */
+export function duplicateTilemap(tiles: Tiles): Tiles {
+  return tiles.map((row) => {
+    return [...row];
+  });
 }
 
 /**

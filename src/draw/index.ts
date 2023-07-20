@@ -1,8 +1,15 @@
-import { TILES_COLORS, TILES_TYPES } from "../config";
+import { TilesColors, TilesTypes } from "../config";
+import { computeTilesMask } from "../generate/mask";
 import { Dimensions, Node, Room, Tile, Tiles } from "../types";
-import { getRoomCenter, traverseTree } from "../utils";
+import { getRoomCenter, printTiles, traverseTree } from "../utils";
 import { initializeContext } from "./canvas";
-import { getDungeonDimensions, getTileSize, initializeTilemap } from "./utils";
+import { tilesTextures } from "./tiles";
+import {
+  getDungeonDimensions,
+  getTileSize,
+  createTilemap,
+  duplicateTilemap,
+} from "./utils";
 
 /**
  * Entrypoint method to:
@@ -20,19 +27,22 @@ export function draw(rootNode: Node<Room>) {
   const tileSize = getTileSize(canvasDimensions, dungeonDimensions);
 
   // Create empty tilesmap
-  const tiles = initializeTilemap(
+  let tiles = createTilemap(
     dungeonDimensions.width,
     dungeonDimensions.height,
-    TILES_TYPES.WALL
+    TilesTypes.WALL
   );
 
   // Carve rooms and corridors into the tilesmap
-  carveRooms(tiles, rootNode);
-  carveCorridors(tiles, rootNode);
+  tiles = carveRooms(tiles, rootNode);
+  tiles = carveCorridors(tiles, rootNode);
 
-  // Draw everything on a canvas
-  drawGrid(context, tileSize, canvasDimensions);
+  // Draw tiles
+  drawTilesMask(context, tileSize, tiles);
   drawTiles(context, tileSize, tiles);
+
+  // Draw widgets
+  drawGrid(context, tileSize, canvasDimensions);
   drawConnections(context, tileSize, rootNode);
   drawRoomIds(context, tileSize, rootNode);
 }
@@ -40,7 +50,9 @@ export function draw(rootNode: Node<Room>) {
 //
 // Carve
 //
-function carveRooms(tiles: Tiles, node: Node<Room>) {
+function carveRooms(tiles: Tiles, node: Node<Room>): Tiles {
+  let copy = duplicateTilemap(tiles);
+
   traverseTree((node) => {
     if (!node.value.position || !node.value.dimensions) {
       return;
@@ -53,24 +65,28 @@ function carveRooms(tiles: Tiles, node: Node<Room>) {
 
         switch (node.value.type) {
           case "start":
-            tiles[posY][posX] = TILES_TYPES.START;
+            copy[posY][posX] = TilesTypes.START;
             break;
           case "room":
-            tiles[posY][posX] = TILES_TYPES.ROOM;
+            copy[posY][posX] = TilesTypes.ROOM;
             break;
           case "boss":
-            tiles[posY][posX] = TILES_TYPES.BOSS;
+            copy[posY][posX] = TilesTypes.BOSS;
             break;
           case "end":
-            tiles[posY][posX] = TILES_TYPES.END;
+            copy[posY][posX] = TilesTypes.END;
             break;
         }
       }
     }
   }, node);
+
+  return copy;
 }
 
-function carveCorridors(tiles: Tiles, node: Node<Room>) {
+function carveCorridors(tiles: Tiles, node: Node<Room>): Tiles {
+  let copy = duplicateTilemap(tiles);
+
   traverseTree((node) => {
     if (!node.value.corridor) {
       return;
@@ -81,14 +97,16 @@ function carveCorridors(tiles: Tiles, node: Node<Room>) {
         const posY = node.value.corridor.position.y + y;
         const posX = node.value.corridor.position.x + x;
 
-        tiles[posY][posX] = TILES_TYPES.CORRIDOR;
+        copy[posY][posX] = TilesTypes.CORRIDOR;
       }
     }
   }, node);
+
+  return copy;
 }
 
 //
-// Draw
+// Draw: widgets
 //
 function drawGrid(
   context: CanvasRenderingContext2D,
@@ -113,49 +131,6 @@ function drawGrid(
 
   context.stroke();
   context.closePath();
-}
-
-function drawTiles(
-  context: CanvasRenderingContext2D,
-  tileSize: number,
-  tiles: Tiles
-) {
-  for (let y = 0; y < tiles.length; y++) {
-    for (let x = 0; x < tiles[y].length; x++) {
-      drawTile(context, tileSize, x, y, tiles[y][x]);
-    }
-  }
-}
-
-function drawTile(
-  context: CanvasRenderingContext2D,
-  tileSize: number,
-  x: number,
-  y: number,
-  tile: Tile
-) {
-  switch (tile) {
-    case TILES_TYPES.START:
-      context.fillStyle = TILES_COLORS.START;
-      break;
-    case TILES_TYPES.ROOM:
-      context.fillStyle = TILES_COLORS.ROOM;
-      break;
-    case TILES_TYPES.BOSS:
-      context.fillStyle = TILES_COLORS.BOSS;
-      break;
-    case TILES_TYPES.CORRIDOR:
-      context.fillStyle = TILES_COLORS.CORRIDOR;
-      break;
-    case TILES_TYPES.END:
-      context.fillStyle = TILES_COLORS.END;
-      break;
-    case TILES_TYPES.WALL:
-      context.fillStyle = TILES_COLORS.WALL;
-      break;
-  }
-
-  context.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
 }
 
 function drawConnections(
@@ -200,4 +175,94 @@ function drawRoomIds(
       parentCenter.y * tileSize
     );
   }, rootNode);
+}
+
+//
+// Draw: tiles
+//
+function drawTiles(
+  context: CanvasRenderingContext2D,
+  tileSize: number,
+  tiles: Tiles
+) {
+  for (let y = 0; y < tiles.length; y++) {
+    for (let x = 0; x < tiles[y].length; x++) {
+      drawTile(context, tileSize, x, y, tiles[y][x]);
+    }
+  }
+}
+
+function drawTile(
+  context: CanvasRenderingContext2D,
+  tileSize: number,
+  x: number,
+  y: number,
+  tile: Tile
+) {
+  switch (tile) {
+    case TilesTypes.WALL:
+      context.fillStyle = TilesColors.WALL;
+      break;
+    case TilesTypes.START:
+      context.fillStyle = TilesColors.START;
+      break;
+    case TilesTypes.ROOM:
+      context.fillStyle = TilesColors.ROOM;
+      break;
+    case TilesTypes.BOSS:
+      context.fillStyle = TilesColors.BOSS;
+      break;
+    case TilesTypes.CORRIDOR:
+      context.fillStyle = TilesColors.CORRIDOR;
+      break;
+    case TilesTypes.END:
+      context.fillStyle = TilesColors.END;
+      break;
+  }
+
+  context.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+}
+
+//
+// Draw: tiles mask
+//
+function drawTilesMask(
+  context: CanvasRenderingContext2D,
+  tileSize: number,
+  tiles: Tiles
+) {
+  // Normalize the tilemap (1 for walls, 0 for everything else)
+  const normalized = normalizeTilemap(tiles);
+
+  // Compute the bitmask tilesmap
+  const mask = computeTilesMask(normalized);
+
+  for (let y = 0; y < tiles.length; y++) {
+    for (let x = 0; x < tiles[y].length; x++) {
+      const tileId = mask[y][x];
+      const texture = tilesTextures[tileId];
+
+      if (texture) {
+        context.drawImage(
+          texture,
+          x * tileSize,
+          y * tileSize,
+          tileSize,
+          tileSize
+        );
+      }
+    }
+  }
+}
+
+export function normalizeTilemap(tiles: Tiles): Tiles {
+  const copy = duplicateTilemap(tiles);
+
+  for (let y = 0; y < copy.length; y++) {
+    for (let x = 0; x < copy[y].length; x++) {
+      copy[y][x] = copy[y][x] === TilesTypes.WALL ? 1 : 0;
+    }
+  }
+
+  return copy;
 }
