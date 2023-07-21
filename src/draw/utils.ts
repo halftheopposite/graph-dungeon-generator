@@ -31,6 +31,32 @@ export function duplicateTilemap(tiles: Tiles): Tiles {
 }
 
 /**
+ * Pad a tilemap on all sides.
+ */
+export function padTilemap(
+  tiles: Tiles,
+  paddingWidth: number,
+  fill: number
+): Tiles {
+  const copy = duplicateTilemap(tiles);
+
+  const newLine = new Array(tiles[0].length).fill(fill);
+
+  for (let i = 0; i < paddingWidth; i++) {
+    copy.unshift(newLine);
+    copy.push(newLine);
+  }
+
+  return copy.map((row) => {
+    return [
+      ...new Array(paddingWidth).fill(fill),
+      ...row,
+      ...new Array(paddingWidth).fill(fill),
+    ];
+  });
+}
+
+/**
  * Get the dungeon width and height in tiles unit.
  */
 export function getDungeonDimensions(rootNode: Node<Room>): Dimensions {

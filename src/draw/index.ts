@@ -37,6 +37,9 @@ export function draw(rootNode: Node<Room>) {
   tiles = carveRooms(tiles, rootNode);
   tiles = carveCorridors(tiles, rootNode);
 
+  // Add some padding to the tilemap for a more visually appealing result (optional)
+  // tiles = padTilemap(tiles, 3, TilesTypes.WALL);
+
   // Draw tiles
   drawTilesMask(context, tileSize, tiles);
   drawTiles(context, tileSize, tiles);
@@ -237,8 +240,8 @@ function drawTilesMask(
   // Compute the bitmask tilesmap
   const mask = computeTilesMask(normalized);
 
-  for (let y = 0; y < tiles.length; y++) {
-    for (let x = 0; x < tiles[y].length; x++) {
+  for (let y = 0; y < mask.length; y++) {
+    for (let x = 0; x < mask[y].length; x++) {
       const tileId = mask[y][x];
       const texture = tilesTextures[tileId];
 
