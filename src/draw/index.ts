@@ -1,14 +1,14 @@
 import { TilesColors, TilesTypes } from "../config";
-import { computeTilesMask } from "../generate/mask";
 import { Dimensions, Node, Room, Tile, Tiles } from "../types";
-import { getRoomCenter, printTiles, traverseTree } from "../utils";
+import { getRoomCenter, traverseTree } from "../utils";
 import { initializeContext } from "./canvas";
+import { computeTilesMask } from "./mask";
 import { tilesTextures } from "./tiles";
 import {
-  getDungeonDimensions,
-  getTileSize,
   createTilemap,
   duplicateTilemap,
+  getDungeonDimensions,
+  getTileSize,
 } from "./utils";
 
 /**

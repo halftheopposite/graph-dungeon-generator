@@ -1,6 +1,5 @@
-import { TilesTypes } from "../config";
-import { duplicateTilemap } from "../draw/utils";
 import { Tiles } from "../types";
+import { duplicateTilemap } from "./utils";
 
 const MASK_TO_TILE_ID = {
   2: 1,
