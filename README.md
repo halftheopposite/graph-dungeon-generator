@@ -10,7 +10,7 @@
 
 A simple graph-based procedural dungeon generator.
 
-Want to try the generator? Click [here](https://halftheopposite.github.io/graph-dungeon-generator/) and have some fun 🧙‍♂️.
+Want to play with the generator? [Try the demo here](https://halftheopposite.github.io/graph-dungeon-generator/) and have some fun 🧙‍♂️.
 
 ## Running the project
 
