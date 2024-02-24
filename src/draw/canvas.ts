@@ -1,5 +1,8 @@
 import { Dimensions } from "../types";
 
+/**
+ * Initialize a canvas and a rendering context.
+ */
 export function initializeContext(): {
   context: CanvasRenderingContext2D;
   canvasDimensions: Dimensions;

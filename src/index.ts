@@ -11,7 +11,12 @@ let inputGraph: InputDungeon = LARGE;
  */
 function generateAndDraw() {
   const rootNode = logStep(`Generate ✅`, () => generate(inputGraph));
-  logStep(`Draw ✅`, () => draw(rootNode));
+  logStep(`Draw ✅`, () =>
+    draw(rootNode, {
+      padding: 4,
+      debugWidgets: true,
+    })
+  );
 }
 
 /**

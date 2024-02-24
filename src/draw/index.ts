@@ -9,21 +9,35 @@ import {
   duplicateTilemap,
   getDungeonDimensions,
   getTileSize,
+  padNodes,
 } from "./utils";
+
+interface DrawOptions {
+  /** The amount of padding to apply to the dungeon's tilemap. */
+  padding?: number;
+  /** Wether or not to draw debugging widgets (ex: grid lines, connections, ids, etc.). */
+  debugWidgets?: boolean;
+}
 
 /**
  * Entrypoint method to:
  * - Get a reference to the Canvas' context
  * - Transform rooms and corridors to tiles
- * - Draw widgets such as room names and connections
+ * - Draw widgets such as room names and connections (optional)
  *
  * Note: all transformations to data are done by reference.
  */
-export function draw(rootNode: Node<Room>) {
+export function draw(rootNode: Node<Room>, options: DrawOptions = {}) {
   const { context, canvasDimensions } = initializeContext();
 
+  const padding =
+    !!options.padding && !isNaN(options.padding) && options.padding > 0
+      ? options.padding
+      : 0;
+  const debugWidgets = !!options.debugWidgets;
+
   // Find dungeon's width and height
-  const dungeonDimensions = getDungeonDimensions(rootNode);
+  const dungeonDimensions = getDungeonDimensions(rootNode, padding);
   const tileSize = getTileSize(canvasDimensions, dungeonDimensions);
 
   // Create empty tilesmap
@@ -33,21 +47,23 @@ export function draw(rootNode: Node<Room>) {
     TilesTypes.WALL
   );
 
+  // Add some padding to the tilemap for a more visually appealing result
+  padNodes(rootNode, padding);
+
   // Carve rooms and corridors into the tilesmap
   tiles = carveRooms(tiles, rootNode);
   tiles = carveCorridors(tiles, rootNode);
-
-  // Add some padding to the tilemap for a more visually appealing result (optional)
-  // tiles = padTilemap(tiles, 3, TilesTypes.WALL);
 
   // Draw tiles
   drawTilesMask(context, tileSize, tiles);
   drawTiles(context, tileSize, tiles);
 
   // Draw widgets
-  drawGrid(context, tileSize, canvasDimensions);
-  drawConnections(context, tileSize, rootNode);
-  drawRoomIds(context, tileSize, rootNode);
+  if (debugWidgets) {
+    drawGrid(context, tileSize, canvasDimensions);
+    drawConnections(context, tileSize, rootNode);
+    drawRoomIds(context, tileSize, rootNode);
+  }
 }
 
 //
@@ -258,7 +274,7 @@ function drawTilesMask(
   }
 }
 
-export function normalizeTilemap(tiles: Tiles): Tiles {
+function normalizeTilemap(tiles: Tiles): Tiles {
   const copy = duplicateTilemap(tiles);
 
   for (let y = 0; y < copy.length; y++) {

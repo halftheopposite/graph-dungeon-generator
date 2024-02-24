@@ -32,6 +32,7 @@ export function duplicateTilemap(tiles: Tiles): Tiles {
 
 /**
  * Pad a tilemap on all sides.
+ * ⚠️ Note: currently not used, but could serve as a convenient method.
  */
 export function padTilemap(
   tiles: Tiles,
@@ -57,9 +58,31 @@ export function padTilemap(
 }
 
 /**
+ * Pad a tree of nodes.
+ */
+export function padNodes(rootNode: Node<Room>, padding: number) {
+  traverseTree((node) => {
+    if (!node.value.position || !node.value.dimensions) {
+      return;
+    }
+
+    node.value.position.y += padding;
+    node.value.position.x += padding;
+
+    if (node.value.corridor) {
+      node.value.corridor.position.y += padding;
+      node.value.corridor.position.x += padding;
+    }
+  }, rootNode);
+}
+
+/**
  * Get the dungeon width and height in tiles unit.
  */
-export function getDungeonDimensions(rootNode: Node<Room>): Dimensions {
+export function getDungeonDimensions(
+  rootNode: Node<Room>,
+  padding: number
+): Dimensions {
   let dimensions: Dimensions = {
     width: 0,
     height: 0,
@@ -80,6 +103,10 @@ export function getDungeonDimensions(rootNode: Node<Room>): Dimensions {
       dimensions.height = maxY;
     }
   }, rootNode);
+
+  // We add padding to the overall dimension
+  dimensions.width += padding * 2;
+  dimensions.height += padding * 2;
 
   return dimensions;
 }
