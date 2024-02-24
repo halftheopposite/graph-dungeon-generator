@@ -25,12 +25,12 @@ Given the same input graph, we can generate many dungeon shapes and pattern.
 
 <table>
     <tr>
-        <td><img src="assets/dungeon-1.png"></td>
-        <td><img src="assets/dungeon-2.png"></td>
+        <td><img src="assets/dungeon-1.png" width="300px"></td>
+        <td><img src="assets/dungeon-2.png" width="300px"></td>
     </tr>
     <tr>
-        <td><img src="assets/dungeon-3.png"></td>
-        <td><img src="assets/dungeon-4.png"></td>
+        <td><img src="assets/dungeon-3.png" width="300px"></td>
+        <td><img src="assets/dungeon-4.png" width="300px"></td>
     </tr> 
 </table>
 
