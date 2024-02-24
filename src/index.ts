@@ -4,7 +4,7 @@ import { LARGE, MEDIUM, SMALL } from "./graphs";
 import { InputDungeon } from "./types";
 import { logStep } from "./utils";
 
-let inputGraph: InputDungeon = SMALL;
+let inputGraph: InputDungeon = LARGE;
 
 /**
  * Entry point to run a dungeon generation and drawing it 🧙‍♂️.
