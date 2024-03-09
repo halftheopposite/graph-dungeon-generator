@@ -36,7 +36,7 @@ Given the same input graph, we can generate many dungeon shapes and pattern.
 
 ## Architecture
 
-The project is split into 3 distinct modules (aka folders) in an effort to make it simpler to decouple responsabilities:
+The project is split into 3 distinct modules (aka folders) in an effort to separate concerns:
 
 - `/generate`: where all the generation code lies (returns an `Node<Room>` tree).
 - `/draw`: where we take the `Node<Room>` tree, generate a tilesmap, and render it to an HTML canvas with some debugging information.
