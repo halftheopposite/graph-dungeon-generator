@@ -5,6 +5,7 @@ import {
   ROOM_DISTANCE_MAX,
   ROOM_DISTANCE_MIN,
   ROOM_ITERATIONS_MAX,
+  ROOM_PADDING,
 } from "../config";
 import {
   Corridor,
@@ -13,10 +14,10 @@ import {
   InputDungeon,
   Node,
   Room,
-  RoomId,
   Vector2,
 } from "../types";
 import { AABB, AABBManager } from "./collisions";
+import { parseInputDungeon } from "./parse";
 import {
   computeOverlapSegment,
   getChildDirection,
@@ -37,32 +38,6 @@ export function generate(dungeon: InputDungeon): Node<Room> {
   normalizePositions(rootNode);
 
   return rootNode;
-}
-
-//
-// Parse
-//
-function parseInputDungeon(dungeon: InputDungeon): Node<Room> {
-  return createRoomNode(dungeon, "start");
-}
-
-function createRoomNode(dungeon: InputDungeon, roomId: RoomId): Node<Room> {
-  const room = dungeon[roomId];
-  if (!room) {
-    throw new Error(`Could not find "${roomId}" to generate tree.`);
-  }
-
-  const node = new Node<Room>({
-    id: room.id,
-    type: room.type,
-  });
-
-  room.children.map((item) => {
-    const childNode = createRoomNode(dungeon, item);
-    node.addChild(childNode);
-  });
-
-  return node;
 }
 
 //
@@ -90,7 +65,9 @@ function placeRooms(rootNode: Node<Room>) {
       // then attempt to generate the parent again.
 
       if (backTrackIterations === 0) {
-        throw new Error(`Could not backtrack room generation under `);
+        throw new Error(
+          `Could not backtrack room generation under ${ROOM_BACKTRACK_ITERATIONS_MAX}`
+        );
       }
 
       const parent = node.parent!;
@@ -136,12 +113,16 @@ function placeRoom(
   const position = generateRoomPosition(node, dimensions);
 
   // Create box to check for collisions
+  const startX = position.x - ROOM_PADDING;
+  const startY = position.y - ROOM_PADDING;
+  const endX = startX + dimensions.width + ROOM_PADDING;
+  const endY = startY + dimensions.height + ROOM_PADDING;
   const box: AABB = {
     id: `room-${node.value.id}`,
-    startX: position.x,
-    startY: position.y,
-    endX: position.x + dimensions.width,
-    endY: position.y + dimensions.height,
+    startX,
+    startY,
+    endX,
+    endY,
   };
 
   // Check collisions
@@ -181,10 +162,11 @@ function placeCorridor(
     endY: corridor.position.y + corridor.dimensions.height,
   };
 
+  // TODO: Enable this again when corridors become complex enough, for now no use.
   // Check collisions
-  if (aabbManager.collides(box)) {
-    throw new Error(`Could not place corridor as it is colliding.`);
-  }
+  // if (aabbManager.collides(box)) {
+  //   throw new Error(`Could not place corridor as it is colliding.`);
+  // }
 
   node.value.corridor = corridor;
   aabbManager.addBox(box);

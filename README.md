@@ -58,3 +58,8 @@ This generator does not handle overly complex situations such as:
 - Nodes with too many children
 - L-shaped corridors
 - Circular nodes (ex: A → B → C → A)
+
+## Roadmap
+
+- [x] Prevent rooms from joining which can disturb
+- [ ] Pick from a set of predefined rooms that are rectangles
