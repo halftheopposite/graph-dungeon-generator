@@ -56,6 +56,7 @@ body {
   will-change: box-shadow, transform;
   font-size: 18px;
   position: relative;
+  line-height: normal;
 }
 
 .button:focus {
