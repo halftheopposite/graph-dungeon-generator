@@ -12,7 +12,7 @@ A simple graph-based procedural dungeon generator.
 
 Want to play with the generator? [Try the demo here](https://halftheopposite.github.io/graph-dungeon-generator/) and have some fun 🧙‍♂️.
 
-## Running the project
+## Running the project 🚀
 
 1. Clone the repository.
 2. Run `yarn` to install dependencies.
@@ -34,7 +34,7 @@ Given the same input graph, we can generate many dungeon shapes and pattern.
     </tr> 
 </table>
 
-## Architecture
+## Architecture 
 
 The project is split into 3 distinct modules (aka folders) in an effort to separate concerns:
 
@@ -42,7 +42,7 @@ The project is split into 3 distinct modules (aka folders) in an effort to separ
 - `/draw`: where we take the `Node<Room>` tree, generate a tilesmap, and render it to an HTML canvas with some debugging information.
 - `/graphs`: the list of input files used to generate the dungeon. Currently written in TypeScript for type safety, but could as well be JSON files.
 
-## What can it do?
+## What can it do? 👍
 
 - Generate a dungeon given a non-circular graph
 - Backtracking when it cannot find a suitable spot for a child node
@@ -51,7 +51,7 @@ The project is split into 3 distinct modules (aka folders) in an effort to separ
 - Render contextual information for convenience
 - Easily modifiable to add new room types and colors
 
-## What can't it do?
+## What can't it do? 👎
 
 This generator does not handle overly complex situations such as:
 
@@ -59,7 +59,7 @@ This generator does not handle overly complex situations such as:
 - L-shaped corridors
 - Circular nodes (ex: A → B → C → A)
 
-## Roadmap
+## Roadmap 🗺️
 
-- [x] Prevent rooms from joining which can disturb
+- [x] Prevent rooms from touching sides which doesn't respect graph constraints
 - [ ] Pick from a set of predefined rooms that are rectangles
