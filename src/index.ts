@@ -1,10 +1,10 @@
 import { draw } from "./draw";
 import { generate } from "./generate/index";
-import { MEDIUM_CIRCULAR } from "./graphs";
+import { LARGE } from "./graphs";
 import { InputDungeon } from "./types";
 import { getDungeonById, logStep } from "./utils";
 
-let inputGraph: InputDungeon = MEDIUM_CIRCULAR;
+let inputGraph: InputDungeon = LARGE;
 
 /**
  * Entry point to run a dungeon generation and drawing it 🧙‍♂️.
