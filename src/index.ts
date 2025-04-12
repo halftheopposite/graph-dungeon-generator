@@ -1,22 +1,27 @@
 import { draw } from "./draw";
 import { generate } from "./generate/index";
-import { LARGE } from "./graphs";
+import { MEDIUM_CIRCULAR } from "./graphs";
 import { InputDungeon } from "./types";
 import { getDungeonById, logStep } from "./utils";
 
-let inputGraph: InputDungeon = LARGE;
+let inputGraph: InputDungeon = MEDIUM_CIRCULAR;
 
 /**
  * Entry point to run a dungeon generation and drawing it 🧙‍♂️.
  */
 function generateAndDraw(graph: InputDungeon) {
-  const rootNode = logStep(`Generate ✅`, () => generate(graph));
-  logStep(`Draw ✅`, () =>
-    draw(rootNode, {
-      padding: 4,
-      debugWidgets: true,
-    })
-  );
+  try {
+    const rootNode = logStep(`Generate ✅`, () => generate(graph));
+    logStep(`Draw ✅`, () =>
+      draw(rootNode, {
+        padding: 4,
+        debugWidgets: true,
+      })
+    );
+  } catch (error) {
+    console.error(error);
+    return;
+  }
 }
 
 /**
@@ -29,7 +34,7 @@ function testGenerationSuccessRate() {
 
   for (let i = 0; i < 10000; i++) {
     try {
-      generate(LARGE);
+      generate(inputGraph);
     } catch (error) {
       errorCount++;
     }
