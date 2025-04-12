@@ -1,3 +1,6 @@
+import { LARGE, MEDIUM, MEDIUM_CIRCULAR, SMALL } from "./graphs";
+import { InputDungeon } from "./types";
+
 export enum TilesTypes {
   START = 1,
   ROOM = 2,
@@ -24,3 +27,10 @@ export const ROOM_PADDING = 2;
 
 export const CORRIDOR_ITERATIONS_MAX = 20;
 export const CORRIDOR_WIDTH = 4;
+
+export const DUNGEONS: { [key: string]: InputDungeon } = {
+  small: SMALL,
+  medium: MEDIUM,
+  ["medium-circular"]: MEDIUM_CIRCULAR,
+  large: LARGE,
+};

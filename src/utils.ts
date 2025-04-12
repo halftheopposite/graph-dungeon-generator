@@ -1,4 +1,5 @@
-import { Node, Room, Tiles, Vector2 } from "./types";
+import { DUNGEONS } from "./config";
+import { InputDungeon, Node, Room, Tiles, Vector2 } from "./types";
 
 export function traverseTree(fn: (node: Node<Room>) => void, node: Node<Room>) {
   fn(node);
@@ -33,4 +34,8 @@ export function printTiles(tiles: Tiles) {
     print = print.concat(row.join(""), "\n");
   });
   console.log(print);
+}
+
+export function getDungeonById(dungeonId: string): InputDungeon {
+  return DUNGEONS[dungeonId];
 }

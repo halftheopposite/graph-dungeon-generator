@@ -1,16 +1,16 @@
 import { draw } from "./draw";
-import { generate } from "./generate";
-import { LARGE, MEDIUM, MEDIUM_CIRCULAR, SMALL } from "./graphs";
+import { generate } from "./generate/index";
+import { LARGE } from "./graphs";
 import { InputDungeon } from "./types";
-import { logStep } from "./utils";
+import { getDungeonById, logStep } from "./utils";
 
 let inputGraph: InputDungeon = LARGE;
 
 /**
  * Entry point to run a dungeon generation and drawing it 🧙‍♂️.
  */
-function generateAndDraw() {
-  const rootNode = logStep(`Generate ✅`, () => generate(inputGraph));
+function generateAndDraw(graph: InputDungeon) {
+  const rootNode = logStep(`Generate ✅`, () => generate(graph));
   logStep(`Draw ✅`, () =>
     draw(rootNode, {
       padding: 4,
@@ -40,7 +40,7 @@ function testGenerationSuccessRate() {
 }
 
 window.onload = () => {
-  generateAndDraw();
+  generateAndDraw(inputGraph);
 
   // Graph selection
   const selectGraph = document.getElementById(
@@ -48,30 +48,17 @@ window.onload = () => {
   ) as HTMLSelectElement;
   selectGraph.onchange = (event) => {
     const value = (event.currentTarget as HTMLSelectElement).value;
-    switch (value) {
-      case "small":
-        inputGraph = SMALL;
-        break;
-      case "medium":
-        inputGraph = MEDIUM;
-        break;
-      case "medium-circular":
-        inputGraph = MEDIUM_CIRCULAR;
-        break;
-      case "large":
-        inputGraph = LARGE;
-        break;
-    }
+    inputGraph = getDungeonById(value);
 
     // Once the value changes, we generate and draw the dungeon again
-    generateAndDraw();
+    generateAndDraw(inputGraph);
   };
 
   // Generate
   const buttonGenerate = document.getElementById(
     "button-generate"
   ) as HTMLButtonElement;
-  buttonGenerate.onclick = () => generateAndDraw();
+  buttonGenerate.onclick = () => generateAndDraw(inputGraph);
 
   // GitHub repository
   const buttonGitHub = document.getElementById(
