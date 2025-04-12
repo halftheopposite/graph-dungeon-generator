@@ -1,5 +1,9 @@
 import { InputDungeon } from "../types";
 
+/**
+ * A medium-sized circular graph with a diamond pattern (A → B1 → C and A → B2 → C)
+ * and a path to the boss and end.
+ */
 export const MEDIUM_CIRCULAR: InputDungeon = {
   start: {
     id: "start",
@@ -24,7 +28,7 @@ export const MEDIUM_CIRCULAR: InputDungeon = {
   C: {
     id: "C",
     type: "room",
-    children: ["D"],
+    children: ["D", "E"],
   },
   D: {
     id: "D",
