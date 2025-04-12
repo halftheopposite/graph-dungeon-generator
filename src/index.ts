@@ -1,6 +1,6 @@
 import { draw } from "./draw";
 import { generate } from "./generate";
-import { LARGE, MEDIUM, SMALL } from "./graphs";
+import { LARGE, MEDIUM, MEDIUM_CIRCULAR, SMALL } from "./graphs";
 import { InputDungeon } from "./types";
 import { logStep } from "./utils";
 
@@ -54,6 +54,9 @@ window.onload = () => {
         break;
       case "medium":
         inputGraph = MEDIUM;
+        break;
+      case "medium-circular":
+        inputGraph = MEDIUM_CIRCULAR;
         break;
       case "large":
         inputGraph = LARGE;
